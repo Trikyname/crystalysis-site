@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crystalysis — an endless slingshot survival game</title>
+<meta name="description" content="Crystalysis: slingshot an immortal ball through endless geometric hordes to defend your crystal. Coming soon to Android.">
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; min-height: 100vh;
+         background: radial-gradient(ellipse at 50% 35%, #101d3c 0%, #04060e 75%);
+         color: #dbe2ee; display: flex; align-items: center; justify-content: center; text-align: center; }
+  main { padding: 40px 24px; }
+  .gem { margin: 0 auto 30px; }
+  h1 { font-size: clamp(30px, 8vw, 52px); font-weight: 800; letter-spacing: .22em; margin: 0 0 12px; }
+  h1 span { color: #59d9f2; }
+  p.tag { color: #9aa4b6; letter-spacing: .2em; font-size: 13px; text-transform: uppercase; margin: 0 0 44px; }
+  p.desc { color: #b9c2d2; max-width: 460px; margin: 0 auto 44px; line-height: 1.6; }
+  .foot { color: #5c6678; font-size: 13px; }
+  .foot a { color: #59d9f2; text-decoration: none; }
+</style>
+</head>
+<body>
+<main>
+  <svg class="gem" width="120" height="120" viewBox="0 0 512 512" aria-hidden="true">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#9df5ff"/><stop offset="48%" stop-color="#59d9f2"/><stop offset="100%" stop-color="#1a8a96"/>
+      </linearGradient>
+    </defs>
+    <polygon points="256,76 436,256 256,436 76,256" fill="url(#g)" stroke="url(#g)" stroke-width="28" stroke-linejoin="round"/>
+    <polygon points="256,76 436,256 256,436 76,256" fill="none" stroke="#c4f6ff" stroke-width="9" stroke-linejoin="round"/>
+    <circle cx="256" cy="256" r="86" fill="#ffffff"/>
+  </svg>
+  <h1>CRYSTA<span>LYSIS</span></h1>
+  <p class="tag">Horde survival · Supervivencia de hordas · 晶解</p>
+  <p class="desc">Slingshot an immortal ball through endless geometric hordes. Speed is damage. The world only moves while the ball flies. Defend the crystal — or watch it hatch.</p>
+  <p class="foot"><a href="privacy.html">Privacy Policy</a> · TrikyGames · <a href="mailto:alvarocolomvidal@gmail.com">contact</a></p>
+</main>
+</body>
+</html>
