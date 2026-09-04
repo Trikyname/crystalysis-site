@@ -11,69 +11,59 @@
 <meta property="og:type" content="website">
 <style>
   :root {
-    /* Los mismos tokens que el juego (UI/Tokens.uss) — la web no puede inventarse la marca. */
-    --arena:      #0B0F14;
-    --arena-grid: #141B22;
-    --cian:       #59D9F2;
-    --ambar:      #F4CB6E;
-    --violeta:    #A96BF0;
-    --texto-1:    #EAF2F6;
-    --texto-2:    #C3D0D8;
-    --texto-3:    #8A99A4;
+    /* Tokens del juego (UI/Tokens.uss). La web no se inventa la marca. */
+    --arena:   #0A0D11;
+    --cian:    #59D9F2;
+    --ambar:   #F4CB6E;
+    --texto-1: #EAF2F6;
+    --texto-2: #C3D0D8;
+    --texto-3: #8A99A4;
     color-scheme: dark;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
-  body {
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0;
-    background: var(--arena); color: var(--texto-2);
-    display: flex; align-items: center; justify-content: center; text-align: center;
-    overflow-x: hidden;
-  }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0;
+         background: var(--arena); color: var(--texto-2);
+         display: flex; align-items: center; justify-content: center; text-align: center;
+         overflow-x: hidden; }
 
-  /* El lienzo vive DETRAS de todo y ocupa la ventana entera: la arena es el fondo. */
   #arena { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
-  /* Dos capas, y la division importa. La radial solo REBAJA los bordes: subida al .86 que
-     tenia antes dejaba a un enemigo (alfa .72) en un alfa efectivo de 0,10 y la arena se
-     veia vacia. La lineal protege la franja de abajo, que es donde vive el texto y tambien
-     donde la horda se concentra al ir hacia el cristal. */
-  #vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
-              background:
-                linear-gradient(to bottom, rgba(11,15,20,0) 34%, rgba(11,15,20,.72) 52%, rgba(11,15,20,.88) 72%),
-                radial-gradient(ellipse at 50% 30%, rgba(11,15,20,0) 34%, rgba(11,15,20,.5) 82%); }
+  /* Sin viñeta radial: en el menu del juego el campo de triangulos llega hasta el borde.
+     Solo se protege la franja de abajo, que es donde vive el texto. */
+  #veil { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+          background: linear-gradient(to bottom, rgba(10,13,17,0) 30%, rgba(10,13,17,.55) 46%,
+                                                 rgba(10,13,17,.85) 66%); }
 
-  /* El texto no debe robar clics al lienzo: solo los enlaces y el cristal los reciben. */
   main { position: relative; z-index: 2; padding: 40px 24px; pointer-events: none; }
   main a { pointer-events: auto; }
 
-  /* Hueco reservado en el flujo: el cristal se dibuja en el canvas centrado en ESTA caja,
-     asi que dibujo y texto no se separan al cambiar de tamano. */
-  #gem-anchor { width: 150px; height: 150px; margin: 0 auto 20px; pointer-events: auto;
-                cursor: pointer; border-radius: 50%; }
-  #gem-anchor:focus-visible { outline: 2px solid var(--cian); outline-offset: 6px; }
+  #gem { width: 148px; height: 148px; margin: 0 auto 18px; pointer-events: auto;
+         cursor: pointer; border-radius: 50%; }
+  #gem:focus-visible { outline: 2px solid var(--cian); outline-offset: 6px; }
 
-  h1 { font-size: clamp(30px, 8vw, 52px); font-weight: 800; letter-spacing: .22em;
-       margin: 0 0 12px; color: var(--texto-1); }
+  /* El wordmark del menu: CRYSTAL en blanco, YSIS en cian, muy espaciado. */
+  h1 { font-size: clamp(31px, 8.4vw, 54px); font-weight: 800; letter-spacing: .17em;
+       margin: 0 0 10px; color: var(--texto-1); }
   h1 span { color: var(--cian); }
-  p.tag { color: var(--texto-3); letter-spacing: .2em; font-size: 13px; text-transform: uppercase; margin: 0 0 34px; }
-  p.desc { color: var(--texto-2); max-width: 470px; margin: 0 auto 36px; line-height: 1.65; }
+  p.tag { color: var(--texto-3); letter-spacing: .2em; font-size: 13px; text-transform: uppercase;
+          margin: 0 0 32px; }
+  p.desc { color: var(--texto-2); max-width: 470px; margin: 0 auto 34px; line-height: 1.65; }
 
-  .cta { display: inline-block; background: var(--cian); color: #04060e; font-weight: 700;
-         letter-spacing: .08em; text-decoration: none; border-radius: 8px; padding: 15px 32px; font-size: 15px;
-         box-shadow: 0 0 34px rgba(89,217,242,.24); transition: background .15s, transform .15s; }
-  .cta:hover { background: #7ee5fa; transform: translateY(-1px); }
+  /* El boton del menu es una pildora cian con texto oscuro y un ▶ delante. */
+  .cta { display: inline-flex; align-items: center; gap: 12px; background: var(--cian);
+         color: #06171D; font-weight: 800; letter-spacing: .1em; text-decoration: none;
+         border-radius: 999px; padding: 16px 38px; font-size: 15px;
+         box-shadow: 0 0 40px rgba(89,217,242,.22); transition: background .15s, transform .15s; }
+  .cta:hover { background: #7EE5FA; transform: translateY(-1px); }
   .soon { display: block; color: var(--texto-3); font-size: 12px; letter-spacing: .14em;
           text-transform: uppercase; margin-top: 16px; }
   .soon b { color: var(--texto-2); font-weight: 600; }
 
-  .foot { color: #5c6678; font-size: 13px; margin-top: 44px; }
+  .foot { color: #5C6678; font-size: 13px; margin-top: 42px; }
   .foot a { color: var(--cian); text-decoration: none; }
   .foot a:hover { text-decoration: underline; }
 
-  /* La pista de "esto se puede tocar". Sale sola tras un rato de quietud y se va para
-     siempre en cuanto alguien interactua: un signifier que no se apaga es ruido.
-     No depende del hover, porque en movil el hover no existe. */
-  #hint { height: 16px; margin: -6px 0 18px; opacity: 0; transition: opacity .5s;
+  #hint { height: 16px; margin: -4px 0 16px; opacity: 0; transition: opacity .5s;
           color: var(--texto-3); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
   #hint.on { opacity: .9; }
   #hint svg { vertical-align: -3px; margin-right: 7px; }
@@ -84,10 +74,10 @@
 <body>
 
 <canvas id="arena" aria-hidden="true"></canvas>
-<div id="vignette"></div>
+<div id="veil"></div>
 
 <main>
-  <div id="gem-anchor" role="button" tabindex="0" aria-label="Break the crystal"></div>
+  <div id="gem" role="button" tabindex="0" aria-label="Break the crystal"></div>
   <div id="hint">
     <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true">
       <path d="M1 1 L1 11.4 L3.7 8.9 L5.6 13.4 L7.7 12.5 L5.9 8.2 L9.4 7.9 Z"
@@ -95,252 +85,33 @@
     </svg><span id="hint-text">click the crystal</span>
   </div>
 
-  <h1>CRYSTA<span>LYSIS</span></h1>
+  <h1>CRYSTAL<span>YSIS</span></h1>
   <p class="tag">Horde survival · Supervivencia de hordas · 晶解</p>
   <p class="desc">Slingshot an immortal ball through endless geometric hordes. Speed is damage.
   The world only moves while the ball flies. Defend the crystal — or watch it hatch.</p>
 
-  <p><a class="cta" href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">PLAY FREE ON GOOGLE PLAY</a>
+  <p><a class="cta" href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">
+     <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true"><path d="M1 1 L12 7.5 L1 14 Z" fill="currentColor"/></svg>
+     PLAY FREE ON GOOGLE PLAY</a>
      <span class="soon">Coming soon to <b>Steam</b></span></p>
 
   <p class="foot"><a href="press.html">Press kit</a> · <a href="privacy.html">Privacy Policy</a>
      · Trikyname · <a href="mailto:alvarocolomvidal@gmail.com">contact</a></p>
 </main>
 
+<script src="arena.js"></script>
 <script>
-(() => {
-  "use strict";
-  const cv = document.getElementById('arena');
-  const ctx = cv.getContext('2d');
-  const anchor = document.getElementById('gem-anchor');
-  const hint = document.getElementById('hint');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const coarse = matchMedia('(pointer: coarse)').matches;
-
-  if (coarse) document.getElementById('hint-text').textContent = 'tap the crystal';
-
-  const AMBAR = '#F4CB6E';
-
-  let W = 0, H = 0, DPR = 1;
-  const gem = { x: 0, y: 0, r: 34 };
-  function layout() {
-    DPR = Math.min(devicePixelRatio || 1, 2);   // por encima de 2 no se nota y cuesta el doble
-    W = innerWidth; H = innerHeight;
-    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    const b = anchor.getBoundingClientRect();
-    gem.x = b.left + b.width / 2;
-    gem.y = b.top + b.height / 2;
-    gem.r = Math.max(26, Math.min(42, b.width * 0.24));
+  var hint = document.getElementById('hint');
+  if (matchMedia('(pointer: coarse)').matches) {
+    document.getElementById('hint-text').textContent = 'tap the crystal';
   }
-  addEventListener('resize', layout);
-  addEventListener('scroll', layout, { passive: true });
-
-  // ── El puntero ES la bola: circulo blanco con estela violeta, como en el juego ──
-  const ball = { x: -999, y: -999, active: false, trail: [] };
-  function moveBall(e) {
-    ball.x = e.clientX; ball.y = e.clientY; ball.active = true; touched();
-  }
-  addEventListener('pointermove', moveBall, { passive: true });
-  addEventListener('pointerdown', moveBall, { passive: true });
-  document.addEventListener('pointerleave', () => { ball.active = false; });
-
-  // ── La horda ──
-  const N = coarse ? 14 : 28;
-  const horde = [];
-  function spawn(seeded) {
-    const p = { x: 0, y: 0, vx: 0, vy: 0, sz: 6 + Math.random() * 4.5, a: 0 };
-    if (seeded) { p.x = Math.random() * W; p.y = Math.random() * H; return p; }
-    const side = (Math.random() * 4) | 0, m = 40;   // entran por los bordes, como en el juego
-    if (side === 0) { p.x = Math.random() * W; p.y = -m; }
-    else if (side === 1) { p.x = W + m; p.y = Math.random() * H; }
-    else if (side === 2) { p.x = Math.random() * W; p.y = H + m; }
-    else { p.x = -m; p.y = Math.random() * H; }
-    return p;
-  }
-  // ⚠ layout() PRIMERO: sembrar antes deja W y H a 0 y los 28 salen apilados en la esquina
-  // superior izquierda, entrando luego como un solo bloque. Medido con una sonda al DOM.
-  layout();
-  for (let i = 0; i < N; i++) horde.push(spawn(true));
-
-  // ── El cristal, y su otra forma ──
-  const crystal = { broken: false, t: 0, shards: [], hit: 0 };
-  function breakIt() {
-    if (crystal.broken) { crystal.broken = false; crystal.t = 0; touched(); return; }
-    crystal.broken = true; crystal.t = 0; crystal.shards = [];
-    for (let i = 0; i < 18; i++) {
-      const a = (i / 18) * Math.PI * 2 + Math.random() * .4;
-      const s = 1.7 + Math.random() * 3;
-      crystal.shards.push({ x: gem.x, y: gem.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s,
-                            rot: Math.random() * 6.28, vr: (Math.random() - .5) * .24,
-                            sz: 3 + Math.random() * 5, life: 1 });
-    }
-    touched();
-  }
-  anchor.addEventListener('click', breakIt);
-  anchor.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); breakIt(); }
+  var arena = Arena(document.getElementById('arena'), {
+    chase: true, density: 30, gem: document.getElementById('gem')
   });
-
-  // ── La pista: sale tras 3,5 s de quietud y no vuelve nunca ──
-  let interacted = false;
-  const hintTimer = setTimeout(() => { if (!interacted) hint.classList.add('on'); }, 3500);
-  function touched() {
-    if (interacted) return;
-    interacted = true; clearTimeout(hintTimer); hint.classList.remove('on');
-  }
-
-  // ── Dibujo ──
-  function grid() {
-    ctx.strokeStyle = '#141B22'; ctx.lineWidth = 1;
-    const step = 58;
-    ctx.beginPath();
-    for (let x = (W / 2) % step; x < W; x += step) { ctx.moveTo(x + .5, 0); ctx.lineTo(x + .5, H); }
-    for (let y = (H / 2) % step; y < H; y += step) { ctx.moveTo(0, y + .5); ctx.lineTo(W, y + .5); }
-    ctx.stroke();
-  }
-
-  function drawCrystal(time) {
-    const R = gem.r;
-    const glow = ctx.createRadialGradient(gem.x, gem.y, R * .3, gem.x, gem.y, R * 2.7);
-    glow.addColorStop(0, crystal.broken ? 'rgba(244,203,110,.24)' : 'rgba(89,217,242,.26)');
-    glow.addColorStop(1, 'rgba(11,15,20,0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(gem.x, gem.y, R * 2.7, 0, 6.2832); ctx.fill();
-
-    if (!crystal.broken) {
-      const br = 1 + (reduced ? 0 : Math.sin(time / 620) * .035);
-      ctx.save(); ctx.translate(gem.x, gem.y); ctx.rotate(Math.PI / 4); ctx.scale(br, br);
-      const g = ctx.createLinearGradient(0, -R, 0, R);
-      g.addColorStop(0, '#9DF5FF'); g.addColorStop(.5, '#59D9F2'); g.addColorStop(1, '#1A8A96');
-      ctx.fillStyle = g; ctx.fillRect(-R * .72, -R * .72, R * 1.44, R * 1.44);
-      ctx.strokeStyle = '#C4F6FF'; ctx.lineWidth = 2.4;
-      ctx.strokeRect(-R * .45, -R * .45, R * .9, R * .9);
-      ctx.restore();
-      ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(gem.x, gem.y, R * .17, 0, 6.2832); ctx.fill();
-
-      // Destello cuando algo de la horda llega al cristal: sin esto el impacto no se lee.
-      if (crystal.hit > 0) {
-        ctx.strokeStyle = 'rgba(240,82,62,' + (crystal.hit * .75).toFixed(3) + ')';
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(gem.x, gem.y, R * (1.2 + (1 - crystal.hit) * .9), 0, 6.2832); ctx.stroke();
-        crystal.hit -= .05;
-      }
-
-      // Anillo de "esto se puede tocar": solo mientras nadie haya tocado nada.
-      if (!interacted && !reduced) {
-        const p = (time % 1900) / 1900;
-        ctx.strokeStyle = 'rgba(89,217,242,' + ((1 - p) * .5).toFixed(3) + ')';
-        ctx.lineWidth = 1.6;
-        ctx.beginPath(); ctx.arc(gem.x, gem.y, R * (1.15 + p * 1.5), 0, 6.2832); ctx.stroke();
-      }
-    } else {
-      for (const s of crystal.shards) {
-        if (s.life <= 0) continue;
-        s.x += s.vx; s.y += s.vy; s.vx *= .965; s.vy *= .965;
-        s.rot += s.vr; s.life -= .016;
-        ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rot);
-        ctx.fillStyle = 'rgba(89,217,242,' + Math.max(0, s.life * .85).toFixed(3) + ')';
-        ctx.fillRect(-s.sz / 2, -s.sz / 2, s.sz, s.sz);
-        ctx.restore();
-      }
-      // Y de dentro sale la estrella: "Defend the crystal — or watch it hatch."
-      const g2 = Math.min(1, crystal.t / 40);
-      const R2 = R * (0.5 + g2 * 0.95);
-      ctx.save(); ctx.translate(gem.x, gem.y); ctx.rotate(reduced ? 0 : time / 2600);
-      const sg = ctx.createRadialGradient(0, 0, 0, 0, 0, R2);
-      sg.addColorStop(0, '#FFF3D0'); sg.addColorStop(1, AMBAR);
-      ctx.fillStyle = sg; ctx.globalAlpha = g2;
-      ctx.beginPath();
-      for (let i = 0; i < 10; i++) {
-        const rr = i % 2 ? R2 * .44 : R2;
-        const a = (i / 10) * Math.PI * 2 - Math.PI / 2;
-        if (i) ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
-        else   ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
-      }
-      ctx.closePath(); ctx.fill();
-      ctx.globalAlpha = 1; ctx.restore();
-    }
-  }
-
-  function drawBall() {
-    if (!ball.active) { ball.trail.length = 0; return; }
-    ball.trail.push({ x: ball.x, y: ball.y });
-    if (ball.trail.length > 16) ball.trail.shift();
-    ctx.lineCap = 'round';
-    for (let i = 1; i < ball.trail.length; i++) {
-      const a = i / ball.trail.length;
-      ctx.strokeStyle = 'rgba(169,107,240,' + (a * .55).toFixed(3) + ')';
-      ctx.lineWidth = a * 9;
-      ctx.beginPath();
-      ctx.moveTo(ball.trail[i - 1].x, ball.trail[i - 1].y);
-      ctx.lineTo(ball.trail[i].x, ball.trail[i].y);
-      ctx.stroke();
-    }
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(ball.x, ball.y, 7, 0, 6.2832); ctx.fill();
-  }
-
-  function drawHorde() {
-    // Persiguen la bola cuando el puntero esta dentro; si no, van a por el cristal.
-    // Y si el cristal ya eclosiono, huyen de la estrella.
-    const chasing = ball.active;
-    const tx = chasing ? ball.x : gem.x;
-    const ty = chasing ? ball.y : gem.y;
-    const flee = !chasing && crystal.broken;
-    for (let i = 0; i < horde.length; i++) {
-      const p = horde[i];
-      let dx = tx - p.x, dy = ty - p.y;
-      if (flee) { dx = -dx; dy = -dy; }
-      const d = Math.hypot(dx, dy) || 1;
-      // El empujon lleva un poco de ruido: sin el, todos trazan la MISMA recta y acaban
-      // apilados en un solo pixel — que es exactamente lo que hacian en el primer render.
-      p.vx += (dx / d) * .055 + (Math.random() - .5) * .02;
-      p.vy += (dy / d) * .055 + (Math.random() - .5) * .02;
-      const sp = Math.hypot(p.vx, p.vy);
-      if (sp > 1.5) { p.vx = p.vx / sp * 1.5; p.vy = p.vy / sp * 1.5; }
-      p.x += p.vx; p.y += p.vy;
-      p.a = Math.atan2(p.vy, p.vx);
-
-      // La bola es inmortal y hace el resto.
-      if (chasing && Math.hypot(ball.x - p.x, ball.y - p.y) < 16) { horde[i] = spawn(false); continue; }
-      // Y el que llega al cristal lo golpea y vuelve a entrar por un borde. Sin esto la horda
-      // converge al centro y se queda ahi quieta debajo del cristal: se ve vacia la arena.
-      if (!crystal.broken && Math.hypot(gem.x - p.x, gem.y - p.y) < gem.r * 1.35) {
-        crystal.hit = 1; horde[i] = spawn(false); continue;
-      }
-      if (p.x < -140 || p.x > W + 140 || p.y < -140 || p.y > H + 140) { horde[i] = spawn(false); continue; }
-
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
-      ctx.fillStyle = 'rgba(206,220,228,.9)';
-      ctx.beginPath();
-      ctx.moveTo(p.sz, 0); ctx.lineTo(-p.sz * .8, p.sz * .78); ctx.lineTo(-p.sz * .8, -p.sz * .78);
-      ctx.closePath(); ctx.fill();
-      ctx.restore();
-    }
-  }
-
-  let running = true;
-  document.addEventListener('visibilitychange', () => {
-    const wasStopped = !running;
-    running = !document.hidden;
-    if (running && wasStopped) requestAnimationFrame(frame);
-  });
-
-  function frame(time) {
-    if (!running) return;
-    ctx.clearRect(0, 0, W, H);
-    grid();
-    drawHorde();
-    if (crystal.broken) crystal.t++;
-    drawCrystal(time);
-    drawBall();
-    requestAnimationFrame(frame);
-  }
-
-  requestAnimationFrame(frame);
-})();
+  // La pista sale tras 3,5 s de quietud y no vuelve: un signifier que no se apaga es ruido.
+  setTimeout(function () { if (!arena.hasInteracted()) hint.classList.add('on'); }, 3500);
+  addEventListener('pointerdown', function () { hint.classList.remove('on'); });
+  addEventListener('pointermove', function () { if (arena.hasInteracted()) hint.classList.remove('on'); });
 </script>
 </body>
 </html>
