@@ -171,7 +171,11 @@
     var FACETAS = ['#70DEF3', '#54CCE3', '#5AD1E8', '#7BE0F4'];
     var REST_HOLE = 13.95, REST_CORE = 8.43;       // el hueco y su luz, pieza cerrada
     var PLATE_SLIDE = 24;                          // cuanto se retira cada placa al abrirse
-    var STAR_OUT = 40, STAR_IN = 12.02;            // la estrella: CUATRO puntas, no cinco
+    var STAR_OUT = 40, STAR_IN = 12.02;            // StarRadii: CUATRO puntas, no cinco
+    var STAR_HOLE = 11, STAR_CORE = 6.6;           // el hueco y el nucleo con la estrella fuera
+    var RAY_FROM = 30, RAY_TO = 88, RAY_HALF = 3.4, RAY_TIP = 0.2;
+    var BORDE_CLARO = '#EAF2F6';                   // --home-gem-star
+    var BORDE_SOMBRA = '#B9EAF5';                  // lerp(estrella, cara, StarFacetShade 0,34)
     var CARA = [89, 217, 242];                     // --cian
     var VACIO = [10, 13, 17];                      // --home-gem-void  (--surface-0)
     var ESTRELLA = [234, 242, 246];                // --home-gem-star  (--texto-1), blanca
@@ -185,11 +189,13 @@
 
     function drawGem(time) {
       if (!gem.on) return;
-      var R = gem.r, u = R / 50;                   // u = unidad del juego en px
-      var abierto = crystal.broken ? Math.min(1, crystal.t / 46) : 0;
+      var R = gem.r, u = R / 50;                   // u = la unidad del juego, en px
+      var a = crystal.broken ? Math.min(1, crystal.t / 46) : 0;      // apertura 0..1
+      var star = Math.max(0, Math.min(1, (a - 0.08) / 0.55));        // StarAppearsAt/Over
+      var sc = (0.28 + 0.72 * a);                                    // StarScale
 
       var glow = ctx.createRadialGradient(gem.x, gem.y, R * 0.3, gem.x, gem.y, R * 2.8);
-      glow.addColorStop(0, abierto > 0.3 ? 'rgba(234,242,246,.20)' : 'rgba(89,217,242,.28)');
+      glow.addColorStop(0, star > 0.3 ? 'rgba(244,203,110,.20)' : 'rgba(89,217,242,.28)');
       glow.addColorStop(1, 'rgba(10,13,17,0)');
       ctx.fillStyle = glow;
       ctx.beginPath(); ctx.arc(gem.x, gem.y, R * 2.8, 0, 6.2832); ctx.fill();
@@ -197,41 +203,16 @@
       ctx.save();
       ctx.translate(gem.x, gem.y);
 
-      // La estrella sale por el hueco: entra al 8 % de la apertura, no al final.
-      if (abierto > 0.08) {
-        var ap = Math.min(1, (abierto - 0.08) / 0.55);
-        var sc = (0.28 + 0.72 * ap) * u;
-        ctx.save();
-        ctx.rotate(reduced ? 0 : time / 4200);
-        for (var i = 0; i < 8; i++) {
-          var a0 = -1.5708 + i * 0.7854, a1 = -1.5708 + (i + 1) * 0.7854;
-          var r0 = (i % 2 ? STAR_IN : STAR_OUT) * sc, r1 = (i % 2 ? STAR_OUT : STAR_IN) * sc;
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.lineTo(Math.cos(a0) * r0, Math.sin(a0) * r0);
-          ctx.lineTo(Math.cos(a1) * r1, Math.sin(a1) * r1);
-          ctx.closePath();
-          // Cara en sombra tenida hacia el cristal: StarFacetShade = 0,34.
-          ctx.fillStyle = (i % 2) ? mix(ESTRELLA, CARA, 0.34) : 'rgb(234,242,246)';
-          ctx.globalAlpha = ap;
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        ctx.restore();
-      }
-
-      // Las cuatro placas. Cerradas forman una sola pieza; al abrirse se retiran EN LINEA
-      // RECTA sobre su bisectriz — no giran: el autor descarto la bisagra porque girar leia
-      // como explosion y retirarse lee como mecanismo.
+      // ── La concha: cuatro placas que se retiran EN LINEA RECTA sobre su bisectriz ──────
       var V = [[0, -50], [50, 0], [0, 50], [-50, 0]];
-      var desliz = abierto * PLATE_SLIDE * u;
-      var fuera = Math.max(0, (abierto - 0.86) / 0.14);      // la concha se va con la rotura
+      var desliz = a * PLATE_SLIDE * u;
+      var fuera = Math.max(0, (a - 0.86) / 0.14);       // ShellLeavesFrom
       if (fuera < 1) {
+        ctx.globalAlpha = 1 - fuera;
         for (var k = 0; k < 4; k++) {
-          var ang = -0.7854 + k * 1.5708;                    // bisectriz de la placa k
+          var ang = -0.7854 + k * 1.5708;
           ctx.save();
           ctx.translate(Math.cos(ang) * desliz, Math.sin(ang) * desliz);
-          ctx.globalAlpha = 1 - fuera;
           ctx.beginPath();
           ctx.moveTo(0, 0);
           ctx.lineTo(V[k][0] * u, V[k][1] * u);
@@ -244,23 +225,73 @@
         ctx.globalAlpha = 1;
       }
 
-      // El hueco central y su luz, solo con la pieza cerrada.
-      if (abierto < 0.08) {
-        var f = 1 - abierto / 0.08;
-        ctx.globalAlpha = f;
-        ctx.fillStyle = 'rgb(10,13,17)';
-        ctx.beginPath(); ctx.arc(0, 0, REST_HOLE * u, 0, 6.2832); ctx.fill();
-        ctx.fillStyle = 'rgb(234,242,246)';
-        ctx.beginPath(); ctx.arc(0, 0, REST_CORE * u, 0, 6.2832); ctx.fill();
+      // ── La estrella: ABANICO de ocho cunas, no ocho triangulos planos ─────────────────
+      // Cada cuna va de BLANCO PURO en el centro al color de su borde, y los bordes
+      // alternan claro / tenido hacia el cristal (StarFacetShade 0,34). Eso es lo que la
+      // hace leerse tallada, del mismo material que la concha de la que sale; plana era
+      // una silueta blanca recortada.
+      if (star > 0.001) {
+        var rim = [];
+        for (var i = 0; i < 8; i++) {
+          var ai = -1.5708 + i * 0.7854;
+          var ri = (i % 2 ? STAR_IN : STAR_OUT) * sc * u;
+          rim.push([Math.cos(ai) * ri, Math.sin(ai) * ri, ri]);
+        }
+        ctx.globalAlpha = star;
+        for (var i = 0; i < 8; i++) {
+          var p0 = rim[i], p1 = rim[(i + 1) % 8];
+          var rmax = Math.max(p0[2], p1[2]) || 1;
+          var g = ctx.createRadialGradient(0, 0, 0, 0, 0, rmax);
+          g.addColorStop(0, '#FFFFFF');                                  // el brillo del centro
+          g.addColorStop(1, (i % 2 === 0) ? BORDE_CLARO : BORDE_SOMBRA);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.moveTo(0, 0); ctx.lineTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]);
+          ctx.closePath(); ctx.fill();
+        }
         ctx.globalAlpha = 1;
+      }
+
+      // ── El hueco y la luz. SIEMPRE opacos ────────────────────────────────────────────
+      // No se funden: un oscuro medio transparente sobre el cian de las placas da azul, y
+      // ese era el "a veces el centro se pone azul y es raro". Lo que se interpola es el
+      // RADIO; la tinta no se toca.
+      var hole = REST_HOLE + (STAR_HOLE * sc - REST_HOLE) * star;
+      var core = REST_CORE + (STAR_CORE * sc - REST_CORE) * star;
+      ctx.fillStyle = 'rgb(10,13,17)';
+      ctx.beginPath(); ctx.arc(0, 0, hole * u, 0, 6.2832); ctx.fill();
+      // Con la estrella fuera el nucleo es AMBAR (--home-gem-ready); cerrado, blanco.
+      ctx.fillStyle = star > 0.5 ? '#F4CB6E' : '#EAF2F6';
+      ctx.beginPath(); ctx.arc(0, 0, core * u, 0, 6.2832); ctx.fill();
+
+      // ── Los cuatro rayos del estado abierto ──────────────────────────────────────────
+      // ⚠ Arrancan FUERA de la estrella (RayFrom 30), no en el centro: naciendo en el
+      // centro sus cuatro bases se cruzan sobre el nucleo y dejan una equis clarita.
+      if (star > 0.99) {
+        for (var k = 0; k < 4; k++) {
+          var ra = 0.7854 + k * 1.5708;
+          var dx = Math.cos(ra), dy = Math.sin(ra);
+          var sx = -dy * RAY_HALF * u, sy = dx * RAY_HALF * u;
+          var b = RAY_FROM * u, t = RAY_TO * u;
+          var rg = ctx.createLinearGradient(dx * b, dy * b, dx * t, dy * t);
+          rg.addColorStop(0, 'rgba(89,217,242,.16)');
+          rg.addColorStop(1, 'rgba(89,217,242,0)');
+          ctx.fillStyle = rg;
+          ctx.beginPath();
+          ctx.moveTo(dx * b + sx, dy * b + sy);
+          ctx.lineTo(dx * b - sx, dy * b - sy);
+          ctx.lineTo(dx * t - sx * RAY_TIP, dy * t - sy * RAY_TIP);
+          ctx.lineTo(dx * t + sx * RAY_TIP, dy * t + sy * RAY_TIP);
+          ctx.closePath(); ctx.fill();
+        }
       }
       ctx.restore();
 
       if (affordance && !interacted && !reduced && !crystal.broken) {
-        var p = (time % 1900) / 1900;
-        ctx.strokeStyle = 'rgba(89,217,242,' + ((1 - p) * 0.22).toFixed(3) + ')';
+        var pp = (time % 1900) / 1900;
+        ctx.strokeStyle = 'rgba(89,217,242,' + ((1 - pp) * 0.22).toFixed(3) + ')';
         ctx.lineWidth = 1.2;
-        ctx.beginPath(); ctx.arc(gem.x, gem.y, R * (1.55 + p * 1.4), 0, 6.2832); ctx.stroke();
+        ctx.beginPath(); ctx.arc(gem.x, gem.y, R * (1.55 + pp * 1.4), 0, 6.2832); ctx.stroke();
       }
     }
 
