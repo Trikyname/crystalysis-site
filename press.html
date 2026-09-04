@@ -48,7 +48,8 @@
   .art { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin: 20px 0; align-items: center; }
   .art figure { margin: 0; }
   /* El wordmark es blanco: sobre claro desaparece, asi que su celda lleva fondo oscuro propio. */
-  .art .ondark { background: #0d1526; border: 1px solid #1d2433; border-radius: 6px; padding: 14px; }
+  .art .ondark  { background: #0B0F14; border: 1px solid #1d2433; border-radius: 6px; padding: 14px; }
+  .art .onlight { background: #f2f5f9; border: 1px solid #d7dde8; border-radius: 6px; padding: 14px; }
   .art img { width: 100%; display: block; }
   .art figcaption { color: #7c8698; font-size: 13px; margin-top: 8px; }
 
@@ -210,13 +211,18 @@ game's own UI code so it can never drift from the build it advertises.
 
 <div class="art">
   <figure>
-    <div class="ondark"><img src="press/crystalysis-logo-on-dark.png" alt="Crystalysis logo"></div>
-    <figcaption>Logo, 600×400, transparent PNG. The wordmark is white — <b>use it on a dark
-    background</b>. Need a dark-on-light version? Ask and you get it same day.</figcaption>
+    <div class="ondark"><img src="press/crystalysis-logo-on-dark.png" alt="Crystalysis logo, white wordmark"></div>
+    <figcaption><a href="press/crystalysis-logo-on-dark.png" download>Logo for dark backgrounds</a>
+    — 600×400, transparent PNG.</figcaption>
+  </figure>
+  <figure>
+    <div class="onlight"><img src="press/crystalysis-logo-on-light.png" alt="Crystalysis logo, dark wordmark"></div>
+    <figcaption><a href="press/crystalysis-logo-on-light.png" download>Logo for light backgrounds</a>
+    — the wordmark inverted, for white pages and print.</figcaption>
   </figure>
   <figure>
     <div class="ondark"><img src="press/crystalysis-icon-512.png" alt="Crystalysis app icon"></div>
-    <figcaption>App icon, 512×512, transparent PNG.</figcaption>
+    <figcaption><a href="press/crystalysis-icon-512.png" download>App icon</a> — 512×512, transparent PNG.</figcaption>
   </figure>
 </div>
 
