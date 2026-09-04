@@ -20,13 +20,14 @@
     var chase = opts.chase !== false;
     var density = opts.density || 26;
     var gemEl = opts.gem || null;
+    var affordance = opts.affordance !== false;
     var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     var W = 0, H = 0, DPR = 1;
     var gem = { x: 0, y: 0, r: 0, on: false };
     var tris = [];
     var ball = { x: -999, y: -999, on: false, trail: [] };
-    var crystal = { broken: false, t: 0, shards: [], hit: 0 };
+    var crystal = { broken: false, t: 0, shards: [] };
     var running = true, interacted = false;
 
     function layout() {
@@ -41,7 +42,7 @@
         gem.on = true;
         gem.x = g.left + g.width / 2 - r.left;
         gem.y = g.top + g.height / 2 - r.top;
-        gem.r = Math.max(24, Math.min(46, g.width * 0.26));
+        gem.r = g.width * 0.46;   // el rombo llena su caja: semidiagonal = 0,46 del ancho
       }
       var want = Math.max(10, Math.round(W * H / 100000 * density));
       while (tris.length < want) tris.push(make(true));
@@ -144,7 +145,7 @@
 
         if (ball.on && Math.hypot(ball.x - t.x, ball.y - t.y) < 16) { tris[i] = make(false); continue; }
         if (pull && gem.on && !crystal.broken && Math.hypot(gem.x - t.x, gem.y - t.y) < gem.r * 1.3) {
-          crystal.hit = 1; tris[i] = make(false); continue;
+          tris[i] = make(false); continue;
         }
         if (t.x < -140 || t.x > W + 140 || t.y < -140 || t.y > H + 140) { tris[i] = make(false); continue; }
 
@@ -167,8 +168,7 @@
     // anterior era una aproximacion y se notaba.
     //
     // Unidades del juego: radio 50. Aqui se escala por gem.r/50.
-    var FACET_BIAS = [0.18, -0.55, -0.08, 0.72];   // luz por faceta
-    var LIGHT_LIFT = 0.34, SHADOW_DROP = 0.40;
+    var FACETAS = ['#70DEF3', '#54CCE3', '#5AD1E8', '#7BE0F4'];
     var REST_HOLE = 13.95, REST_CORE = 8.43;       // el hueco y su luz, pieza cerrada
     var PLATE_SLIDE = 24;                          // cuanto se retira cada placa al abrirse
     var STAR_OUT = 40, STAR_IN = 12.02;            // la estrella: CUATRO puntas, no cinco
@@ -181,11 +181,7 @@
                       Math.round(a[1] + (b[1] - a[1]) * t) + ',' +
                       Math.round(a[2] + (b[2] - a[2]) * t) + ')';
     }
-    function facetTint(k) {
-      var b = FACET_BIAS[k];
-      return b >= 0 ? mix(CARA, [255, 255, 255], b * LIGHT_LIFT)
-                    : mix(CARA, VACIO, -b * SHADOW_DROP);
-    }
+
 
     function drawGem(time) {
       if (!gem.on) return;
@@ -241,7 +237,7 @@
           ctx.lineTo(V[k][0] * u, V[k][1] * u);
           ctx.lineTo(V[(k + 1) % 4][0] * u, V[(k + 1) % 4][1] * u);
           ctx.closePath();
-          ctx.fillStyle = facetTint(k);
+          ctx.fillStyle = FACETAS[k];
           ctx.fill();
           ctx.restore();
         }
@@ -260,19 +256,11 @@
       }
       ctx.restore();
 
-      if (!crystal.broken && crystal.hit > 0) {
-        ctx.strokeStyle = 'rgba(240,82,62,' + (crystal.hit * 0.5).toFixed(3) + ')';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(gem.x, gem.y, R * (1.2 + (1 - crystal.hit) * 0.9), 0, 6.2832);
-        ctx.stroke();
-        crystal.hit -= 0.12;
-      }
-      if (!interacted && !reduced && !crystal.broken) {
+      if (affordance && !interacted && !reduced && !crystal.broken) {
         var p = (time % 1900) / 1900;
-        ctx.strokeStyle = 'rgba(89,217,242,' + ((1 - p) * 0.5).toFixed(3) + ')';
-        ctx.lineWidth = 1.6;
-        ctx.beginPath(); ctx.arc(gem.x, gem.y, R * (1.15 + p * 1.5), 0, 6.2832); ctx.stroke();
+        ctx.strokeStyle = 'rgba(89,217,242,' + ((1 - p) * 0.22).toFixed(3) + ')';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(gem.x, gem.y, R * (1.55 + p * 1.4), 0, 6.2832); ctx.stroke();
       }
     }
 
