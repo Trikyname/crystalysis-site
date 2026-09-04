@@ -48,14 +48,22 @@
       tris.length = Math.min(tris.length, want);
     }
 
+    function gemR() { return gem.r || 30; }
+
     function make(seeded) {
       var t = {
         x: 0, y: 0, vx: 0, vy: 0,
         sz: 5 + Math.random() * 13,          // el menu mezcla tamanos muy distintos
         rot: Math.random() * 6.283,
         vr: (Math.random() - 0.5) * 0.006,
-        drift: Math.random() * 6.283
+        drift: Math.random() * 6.283,
+        // Orbita propia: radio y sentido. Sin radios distintos los 30 caerian en el mismo
+        // anillo y se leeria como una rueda dentada, no como una horda rodeando algo.
+        orbita: 0,
+        giro: (Math.random() < 0.5 ? -1 : 1) * (0.55 + Math.random() * 0.75)
       };
+      var lejos = Math.hypot(W, H) / 2;
+      t.orbita = Math.max(60, (gemR() * 1.7) + Math.random() * (lejos * 0.72));
       t.vx = Math.cos(t.drift) * 0.12;
       t.vy = Math.sin(t.drift) * 0.12;
       if (seeded) { t.x = Math.random() * W; t.y = Math.random() * H; return t; }
@@ -118,6 +126,17 @@
           var sp = Math.hypot(t.vx, t.vy);
           if (sp > 1.45) { t.vx = t.vx / sp * 1.45; t.vy = t.vy / sp * 1.45; }
           t.rot = Math.atan2(t.vy, t.vx) + 1.5708;   // apuntan a donde van
+        } else if (gem.on) {
+          // ORBITAN el cristal. Velocidad tangencial mas una correccion radial suave hacia su
+          // propio radio: el que entra por un borde espirala hasta su orbita en vez de
+          // aparecer ya colocado, y ninguno llega al centro.
+          var ox = t.x - gem.x, oy = t.y - gem.y;
+          var od = Math.hypot(ox, oy) || 1;
+          var ux = ox / od, uy = oy / od;
+          var err = (t.orbita - od) * 0.006;
+          t.vx = -uy * t.giro + ux * err;
+          t.vy =  ux * t.giro + uy * err;
+          t.rot = Math.atan2(t.vy, t.vx) + 1.5708;
         } else {
           t.rot += t.vr;
         }
@@ -140,65 +159,120 @@
       }
     }
 
+    // ── El cristal, con la geometria del juego ───────────────────────────────────────────
+    //
+    // No es un cuadrado girado con un degradado: son CUATRO PLACAS pegadas por las dos
+    // diagonales, cada una con su propia luz (HomeGemElement.FacetBias), y un hueco central
+    // con luz dentro. Eso es lo que hace que una pieza plana se lea como tallada — mi version
+    // anterior era una aproximacion y se notaba.
+    //
+    // Unidades del juego: radio 50. Aqui se escala por gem.r/50.
+    var FACET_BIAS = [0.18, -0.55, -0.08, 0.72];   // luz por faceta
+    var LIGHT_LIFT = 0.34, SHADOW_DROP = 0.40;
+    var REST_HOLE = 13.95, REST_CORE = 8.43;       // el hueco y su luz, pieza cerrada
+    var PLATE_SLIDE = 24;                          // cuanto se retira cada placa al abrirse
+    var STAR_OUT = 40, STAR_IN = 12.02;            // la estrella: CUATRO puntas, no cinco
+    var CARA = [89, 217, 242];                     // --cian
+    var VACIO = [10, 13, 17];                      // --home-gem-void  (--surface-0)
+    var ESTRELLA = [234, 242, 246];                // --home-gem-star  (--texto-1), blanca
+
+    function mix(a, b, t) {
+      return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * t) + ',' +
+                      Math.round(a[1] + (b[1] - a[1]) * t) + ',' +
+                      Math.round(a[2] + (b[2] - a[2]) * t) + ')';
+    }
+    function facetTint(k) {
+      var b = FACET_BIAS[k];
+      return b >= 0 ? mix(CARA, [255, 255, 255], b * LIGHT_LIFT)
+                    : mix(CARA, VACIO, -b * SHADOW_DROP);
+    }
+
     function drawGem(time) {
       if (!gem.on) return;
-      var R = gem.r;
+      var R = gem.r, u = R / 50;                   // u = unidad del juego en px
+      var abierto = crystal.broken ? Math.min(1, crystal.t / 46) : 0;
+
       var glow = ctx.createRadialGradient(gem.x, gem.y, R * 0.3, gem.x, gem.y, R * 2.8);
-      glow.addColorStop(0, crystal.broken ? 'rgba(244,203,110,.26)' : 'rgba(89,217,242,.28)');
+      glow.addColorStop(0, abierto > 0.3 ? 'rgba(234,242,246,.20)' : 'rgba(89,217,242,.28)');
       glow.addColorStop(1, 'rgba(10,13,17,0)');
       ctx.fillStyle = glow;
       ctx.beginPath(); ctx.arc(gem.x, gem.y, R * 2.8, 0, 6.2832); ctx.fill();
 
-      if (!crystal.broken) {
-        var br = 1 + (reduced ? 0 : Math.sin(time / 620) * 0.03);
-        ctx.save(); ctx.translate(gem.x, gem.y); ctx.rotate(0.7854); ctx.scale(br, br);
-        var g = ctx.createLinearGradient(0, -R, 0, R);
-        g.addColorStop(0, '#9DF5FF'); g.addColorStop(0.5, '#59D9F2'); g.addColorStop(1, '#2FA9C4');
-        ctx.fillStyle = g;
-        ctx.fillRect(-R * 0.72, -R * 0.72, R * 1.44, R * 1.44);
-        ctx.restore();
-        // El punto blanco del centro: en el menu es un circulo limpio, sin cuadro interior.
-        ctx.fillStyle = '#fff';
-        ctx.beginPath(); ctx.arc(gem.x, gem.y, R * 0.19, 0, 6.2832); ctx.fill();
+      ctx.save();
+      ctx.translate(gem.x, gem.y);
 
-        if (crystal.hit > 0) {
-          ctx.strokeStyle = 'rgba(240,82,62,' + (crystal.hit * 0.5).toFixed(3) + ')';
-          ctx.lineWidth = 2;
+      // La estrella sale por el hueco: entra al 8 % de la apertura, no al final.
+      if (abierto > 0.08) {
+        var ap = Math.min(1, (abierto - 0.08) / 0.55);
+        var sc = (0.28 + 0.72 * ap) * u;
+        ctx.save();
+        ctx.rotate(reduced ? 0 : time / 4200);
+        for (var i = 0; i < 8; i++) {
+          var a0 = -1.5708 + i * 0.7854, a1 = -1.5708 + (i + 1) * 0.7854;
+          var r0 = (i % 2 ? STAR_IN : STAR_OUT) * sc, r1 = (i % 2 ? STAR_OUT : STAR_IN) * sc;
           ctx.beginPath();
-          ctx.arc(gem.x, gem.y, R * (1.2 + (1 - crystal.hit) * 0.9), 0, 6.2832);
-          ctx.stroke();
-          crystal.hit -= 0.12;
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(a0) * r0, Math.sin(a0) * r0);
+          ctx.lineTo(Math.cos(a1) * r1, Math.sin(a1) * r1);
+          ctx.closePath();
+          // Cara en sombra tenida hacia el cristal: StarFacetShade = 0,34.
+          ctx.fillStyle = (i % 2) ? mix(ESTRELLA, CARA, 0.34) : 'rgb(234,242,246)';
+          ctx.globalAlpha = ap;
+          ctx.fill();
         }
-        if (!interacted && !reduced) {
-          var p = (time % 1900) / 1900;
-          ctx.strokeStyle = 'rgba(89,217,242,' + ((1 - p) * 0.5).toFixed(3) + ')';
-          ctx.lineWidth = 1.6;
-          ctx.beginPath(); ctx.arc(gem.x, gem.y, R * (1.15 + p * 1.5), 0, 6.2832); ctx.stroke();
-        }
-      } else {
-        for (var i = 0; i < crystal.shards.length; i++) {
-          var s = crystal.shards[i];
-          if (s.life <= 0) continue;
-          s.x += s.vx; s.y += s.vy; s.vx *= 0.965; s.vy *= 0.965;
-          s.rot += s.vr; s.life -= 0.016;
-          ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rot);
-          ctx.fillStyle = 'rgba(89,217,242,' + Math.max(0, s.life * 0.85).toFixed(3) + ')';
-          ctx.fillRect(-s.sz / 2, -s.sz / 2, s.sz, s.sz);
+        ctx.globalAlpha = 1;
+        ctx.restore();
+      }
+
+      // Las cuatro placas. Cerradas forman una sola pieza; al abrirse se retiran EN LINEA
+      // RECTA sobre su bisectriz — no giran: el autor descarto la bisagra porque girar leia
+      // como explosion y retirarse lee como mecanismo.
+      var V = [[0, -50], [50, 0], [0, 50], [-50, 0]];
+      var desliz = abierto * PLATE_SLIDE * u;
+      var fuera = Math.max(0, (abierto - 0.86) / 0.14);      // la concha se va con la rotura
+      if (fuera < 1) {
+        for (var k = 0; k < 4; k++) {
+          var ang = -0.7854 + k * 1.5708;                    // bisectriz de la placa k
+          ctx.save();
+          ctx.translate(Math.cos(ang) * desliz, Math.sin(ang) * desliz);
+          ctx.globalAlpha = 1 - fuera;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(V[k][0] * u, V[k][1] * u);
+          ctx.lineTo(V[(k + 1) % 4][0] * u, V[(k + 1) % 4][1] * u);
+          ctx.closePath();
+          ctx.fillStyle = facetTint(k);
+          ctx.fill();
           ctx.restore();
         }
-        var g2 = Math.min(1, crystal.t / 40), R2 = R * (0.5 + g2 * 0.95);
-        ctx.save(); ctx.translate(gem.x, gem.y); ctx.rotate(reduced ? 0 : time / 2600);
-        var sg = ctx.createRadialGradient(0, 0, 0, 0, 0, R2);
-        sg.addColorStop(0, '#FFF3D0'); sg.addColorStop(1, '#F4CB6E');
-        ctx.fillStyle = sg; ctx.globalAlpha = g2;
+        ctx.globalAlpha = 1;
+      }
+
+      // El hueco central y su luz, solo con la pieza cerrada.
+      if (abierto < 0.08) {
+        var f = 1 - abierto / 0.08;
+        ctx.globalAlpha = f;
+        ctx.fillStyle = 'rgb(10,13,17)';
+        ctx.beginPath(); ctx.arc(0, 0, REST_HOLE * u, 0, 6.2832); ctx.fill();
+        ctx.fillStyle = 'rgb(234,242,246)';
+        ctx.beginPath(); ctx.arc(0, 0, REST_CORE * u, 0, 6.2832); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      ctx.restore();
+
+      if (!crystal.broken && crystal.hit > 0) {
+        ctx.strokeStyle = 'rgba(240,82,62,' + (crystal.hit * 0.5).toFixed(3) + ')';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        for (var k = 0; k < 10; k++) {
-          var rr = k % 2 ? R2 * 0.44 : R2, a = (k / 10) * 6.2832 - 1.5708;
-          if (k) ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
-          else ctx.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
-        }
-        ctx.closePath(); ctx.fill();
-        ctx.globalAlpha = 1; ctx.restore();
+        ctx.arc(gem.x, gem.y, R * (1.2 + (1 - crystal.hit) * 0.9), 0, 6.2832);
+        ctx.stroke();
+        crystal.hit -= 0.12;
+      }
+      if (!interacted && !reduced && !crystal.broken) {
+        var p = (time % 1900) / 1900;
+        ctx.strokeStyle = 'rgba(89,217,242,' + ((1 - p) * 0.5).toFixed(3) + ')';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.arc(gem.x, gem.y, R * (1.15 + p * 1.5), 0, 6.2832); ctx.stroke();
       }
     }
 
