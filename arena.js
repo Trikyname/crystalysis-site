@@ -24,29 +24,46 @@
     var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     var W = 0, H = 0, DPR = 1;
+    var want = 0;                 // cuantos triangulos deberia haber
+    var rectL = 0, rectT = 0;     // origen del lienzo, cacheado (ver layout)
+    var gemDirty = false;         // hay que recolocar el cristal en el proximo frame
     var gem = { x: 0, y: 0, r: 0, on: false };
     var tris = [];
     var ball = { x: -999, y: -999, on: false, trail: [] };
     var crystal = { broken: false, t: 0, shards: [] };
     var running = true, interacted = false;
 
+    // Colocar el cristal es BARATO (una medida, sin tocar el lienzo) y hay que rehacerlo
+    // en cada scroll, porque el cristal va en el flujo de la pagina y el lienzo no.
+    function placeGem() {
+      if (!gemEl) return;
+      var g = gemEl.getBoundingClientRect();
+      gem.on = true;
+      gem.x = g.left + g.width / 2 - rectL;
+      gem.y = g.top + g.height / 2 - rectT;
+      gem.r = g.width * 0.46;     // el rombo llena su caja: semidiagonal = 0,46 del ancho
+    }
+
     function layout() {
-      DPR = Math.min(devicePixelRatio || 1, 2);
       var r = canvas.getBoundingClientRect();
-      W = r.width; H = r.height;
-      canvas.width = Math.round(W * DPR);
-      canvas.height = Math.round(H * DPR);
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      if (gemEl) {
-        var g = gemEl.getBoundingClientRect();
-        gem.on = true;
-        gem.x = g.left + g.width / 2 - r.left;
-        gem.y = g.top + g.height / 2 - r.top;
-        gem.r = g.width * 0.46;   // el rombo llena su caja: semidiagonal = 0,46 del ancho
+      rectL = r.left; rectT = r.top;
+      var dpr = Math.min(devicePixelRatio || 1, 2);
+
+      // ⚠ Asignar canvas.width/height REALOCA el buffer y borra el lienzo, AUNQUE el valor
+      // no cambie. Esto corria en cada evento de scroll y en cada aviso del ResizeObserver:
+      // a 1280x800 con DPR 2 son ~16 MB de realojo por evento, y ESA era la causa del tiron
+      // al entrar y al hacer scroll, no la cantidad de triangulos.
+      if (r.width !== W || r.height !== H || dpr !== DPR) {
+        W = r.width; H = r.height; DPR = dpr;
+        canvas.width = Math.round(W * DPR);
+        canvas.height = Math.round(H * DPR);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        want = Math.max(10, Math.round(W * H / 100000 * density));
+        if (tris.length > want) tris.length = want;
+        // Sin movimiento no se puede entrar por los bordes: se siembra ya colocado.
+        if (reduced) { while (tris.length < want) tris.push(make(true)); }
       }
-      var want = Math.max(10, Math.round(W * H / 100000 * density));
-      while (tris.length < want) tris.push(make(true));
-      tris.length = Math.min(tris.length, want);
+      placeGem();
     }
 
     function gemR() { return gem.r || 30; }
@@ -78,8 +95,8 @@
 
     // ── Puntero ──────────────────────────────────────────────────────────────────────────
     function onMove(e) {
-      var r = canvas.getBoundingClientRect();
-      ball.x = e.clientX - r.left; ball.y = e.clientY - r.top;
+      // Usa el origen cacheado: medir aqui forzaba un reflow en CADA pointermove.
+      ball.x = e.clientX - rectL; ball.y = e.clientY - rectT;
       ball.on = ball.x > -40 && ball.x < W + 40 && ball.y > -40 && ball.y < H + 40;
       if (ball.on) interacted = true;
     }
@@ -116,15 +133,19 @@
       var ty = ball.on ? ball.y : gem.y;
       ctx.lineWidth = 1.6;
       ctx.strokeStyle = 'rgba(150,164,175,.42)';
+      // TODOS los triangulos comparten estilo, asi que van en UN camino y UN stroke() en
+      // vez de save/translate/rotate/stroke/restore por cada uno. Con ~270 en pantalla eso
+      // eran ~1.600 llamadas de contexto por frame.
+      ctx.beginPath();
       for (var i = 0; i < tris.length; i++) {
         var t = tris[i];
         if (pull) {
           var dx = tx - t.x, dy = ty - t.y;
           if (huyen) { dx = -dx; dy = -dy; }
-          var d = Math.hypot(dx, dy) || 1;
+          var d = Math.sqrt(dx * dx + dy * dy) || 1;
           t.vx += (dx / d) * 0.05 + (Math.random() - 0.5) * 0.02;
           t.vy += (dy / d) * 0.05 + (Math.random() - 0.5) * 0.02;
-          var sp = Math.hypot(t.vx, t.vy);
+          var sp = Math.sqrt(t.vx * t.vx + t.vy * t.vy);
           if (sp > 1.45) { t.vx = t.vx / sp * 1.45; t.vy = t.vy / sp * 1.45; }
           t.rot = Math.atan2(t.vy, t.vx) + 1.5708;   // apuntan a donde van
         } else if (gem.on) {
@@ -132,7 +153,7 @@
           // propio radio: el que entra por un borde espirala hasta su orbita en vez de
           // aparecer ya colocado, y ninguno llega al centro.
           var ox = t.x - gem.x, oy = t.y - gem.y;
-          var od = Math.hypot(ox, oy) || 1;
+          var od = Math.sqrt(ox * ox + oy * oy) || 1;
           var ux = ox / od, uy = oy / od;
           var err = (t.orbita - od) * 0.006;
           t.vx = -uy * t.giro + ux * err;
@@ -143,21 +164,23 @@
         }
         if (!reduced) { t.x += t.vx; t.y += t.vy; }
 
-        if (ball.on && Math.hypot(ball.x - t.x, ball.y - t.y) < 16) { tris[i] = make(false); continue; }
-        if (pull && gem.on && !crystal.broken && Math.hypot(gem.x - t.x, gem.y - t.y) < gem.r * 1.3) {
+        var bx = ball.x - t.x, by = ball.y - t.y;
+        if (ball.on && bx * bx + by * by < 256) { tris[i] = make(false); continue; }
+        var gx = gem.x - t.x, gy = gem.y - t.y, gr = gem.r * 1.3;
+        if (pull && gem.on && !crystal.broken && gx * gx + gy * gy < gr * gr) {
           tris[i] = make(false); continue;
         }
         if (t.x < -140 || t.x > W + 140 || t.y < -140 || t.y > H + 140) { tris[i] = make(false); continue; }
 
-        ctx.save();
-        ctx.translate(t.x, t.y); ctx.rotate(t.rot);
-        ctx.beginPath();
-        ctx.moveTo(0, -t.sz);
-        ctx.lineTo(t.sz * 0.88, t.sz * 0.72);
-        ctx.lineTo(-t.sz * 0.88, t.sz * 0.72);
-        ctx.closePath(); ctx.stroke();       // CONTORNO, no relleno: como en el menu
-        ctx.restore();
+        // Vertices rotados a mano: mismo dibujo, sin transformaciones por triangulo.
+        var c = Math.cos(t.rot), sn = Math.sin(t.rot);
+        var ax = t.sz * 0.88, ay = t.sz * 0.72;
+        ctx.moveTo(t.x + sn * t.sz,             t.y - c * t.sz);
+        ctx.lineTo(t.x + ax * c - ay * sn,      t.y + ax * sn + ay * c);
+        ctx.lineTo(t.x - ax * c - ay * sn,      t.y - ax * sn + ay * c);
+        ctx.closePath();
       }
+      ctx.stroke();                          // CONTORNO, no relleno: como en el menu
     }
 
     // ── El cristal, con la geometria del juego ───────────────────────────────────────────
@@ -313,8 +336,18 @@
       ctx.beginPath(); ctx.arc(ball.x, ball.y, 7, 0, 6.2832); ctx.fill();
     }
 
+    // Cuantos triangulos entran por frame. La pantalla arranca VACIA y se va llenando
+    // desde los bordes hasta el tope: el primer frame deja de tener que dibujar y situar
+    // los ~270 de golpe, y ademas se lee como la horda llegando.
+    var RAMPA = 4;
+
     function frame(time) {
       if (!running) return;
+      if (gemDirty) { gemDirty = false; placeGem(); }
+      if (tris.length < want) {
+        var faltan = Math.min(RAMPA, want - tris.length);
+        for (var n = 0; n < faltan; n++) tris.push(make(false));
+      }
       ctx.clearRect(0, 0, W, H);
       drawTris();
       if (crystal.broken) crystal.t++;
@@ -324,7 +357,9 @@
     }
 
     addEventListener('resize', layout);
-    addEventListener('scroll', layout, { passive: true });
+    // El scroll NO puede rehacer el lienzo (ver layout): solo mueve el cristal, y ademas
+    // se acumula hasta el proximo frame en vez de correr en cada evento.
+    addEventListener('scroll', function () { gemDirty = true; }, { passive: true });
     document.addEventListener('visibilitychange', function () {
       var was = !running;
       running = !document.hidden;
@@ -333,6 +368,11 @@
 
     // ⚠ layout() ANTES de sembrar: con W y H a cero salen todos apilados en la esquina.
     layout();
+    // ⚠ Aqui hubo un arranque diferido (requestIdleCallback / setTimeout) y se RETIRO el
+    // 08/09: medido en Chrome sin cabeza, habia contextos donde no disparaba NINGUNO de
+    // los dos y la arena se quedaba en negro para siempre. Ahorraba ~200 ms de nada, que
+    // es justo lo que ya ahorra el arranque en vacio de abajo. No lo reintroduzcas sin
+    // comprobar que dibuja en un entorno con tiempo virtual.
     requestAnimationFrame(frame);
 
     return { relayout: layout, hasInteracted: function () { return interacted; } };
