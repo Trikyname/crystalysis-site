@@ -16,7 +16,11 @@
 
   function Arena(canvas, opts) {
     opts = opts || {};
-    var ctx = canvas.getContext('2d');
+    // alpha:false = capa OPACA. Con transparencia, el compositor tiene que mezclar el
+    // lienzo entero contra el fondo en cada frame; declarandolo opaco se lo salta. A
+    // cambio hay que pintar el fondo a mano (clearRect dejaria negro), de ahi `bg`.
+    var ctx = canvas.getContext('2d', { alpha: false });
+    var bg = opts.bg || '#0A0D11';
     var chase = opts.chase !== false;
     var density = opts.density || 26;
     var gemEl = opts.gem || null;
@@ -47,7 +51,15 @@
     function layout() {
       var r = canvas.getBoundingClientRect();
       rectL = r.left; rectT = r.top;
-      var dpr = Math.min(devicePixelRatio || 1, 2);
+      // El coste por frame es PINTAR PIXELES y subirlos al compositor, asi que se acota
+      // el total, no solo el DPR: en un monitor grande, un tope de DPR sigue dejando que
+      // el area crezca sin limite. Con un techo de pixeles, el coste es el mismo en un
+      // portatil que en un 4K; la unica consecuencia es que el fondo se escala un poco,
+      // y son contornos de 1,6 px sobre negro.
+      var maxPx = opts.maxPixels || 2300000;
+      var dpr = Math.min(devicePixelRatio || 1, opts.maxDpr || 1.5);
+      var area = Math.max(1, r.width * r.height);
+      if (area * dpr * dpr > maxPx) dpr = Math.max(0.75, Math.sqrt(maxPx / area));
 
       // ⚠ Asignar canvas.width/height REALOCA el buffer y borra el lienzo, AUNQUE el valor
       // no cambie. Esto corria en cada evento de scroll y en cada aviso del ResizeObserver:
@@ -348,7 +360,8 @@
         var faltan = Math.min(RAMPA, want - tris.length);
         for (var n = 0; n < faltan; n++) tris.push(make(false));
       }
-      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = bg;                     // sustituye a clearRect: la capa es opaca
+      ctx.fillRect(0, 0, W, H);
       drawTris();
       if (crystal.broken) crystal.t++;
       drawGem(time);
@@ -368,14 +381,31 @@
 
     // ⚠ layout() ANTES de sembrar: con W y H a cero salen todos apilados en la esquina.
     layout();
-    // ⚠ Aqui hubo un arranque diferido (requestIdleCallback / setTimeout) y se RETIRO el
-    // 08/09: medido en Chrome sin cabeza, habia contextos donde no disparaba NINGUNO de
-    // los dos y la arena se quedaba en negro para siempre. Ahorraba ~200 ms de nada, que
-    // es justo lo que ya ahorra el arranque en vacio de abajo. No lo reintroduzcas sin
-    // comprobar que dibuja en un entorno con tiempo virtual.
-    requestAnimationFrame(frame);
+    // El bucle espera a que la pagina termine de cargar. El coste por frame es el mismo
+    // haya 4 triangulos o 300 (lo caro es subir el lienzo al compositor), asi que la
+    // rampa por si sola NO quitaba el tiron de la entrada: hay que no dibujar todavia.
+    // ⚠ Con red de seguridad: un intento anterior con requestIdleCallback no disparaba en
+    // algunos contextos y dejaba la arena en negro para siempre. 'load' + temporizador.
+    var arrancado = false;
+    function arrancar() {
+      if (arrancado) return;
+      arrancado = true;
+      requestAnimationFrame(frame);
+    }
+    if (document.readyState === 'complete') arrancar();
+    else {
+      addEventListener('load', arrancar);
+      setTimeout(arrancar, 2500);
+    }
 
-    return { relayout: layout, hasInteracted: function () { return interacted; } };
+    return {
+      relayout: layout,
+      // Aviso BARATO de "algo se ha movido": marca y se resuelve en el proximo frame.
+      // Llamar a relayout() desde un ResizeObserver mide dentro del callback y fuerza un
+      // layout sincrono en mitad de la carga, justo cuando la pagina va apretada.
+      invalidate: function () { gemDirty = true; },
+      hasInteracted: function () { return interacted; }
+    };
   }
 
   global.Arena = Arena;
