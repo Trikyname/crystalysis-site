@@ -373,11 +373,21 @@
     // El scroll NO puede rehacer el lienzo (ver layout): solo mueve el cristal, y ademas
     // se acumula hasta el proximo frame en vez de correr en cada evento.
     addEventListener('scroll', function () { gemDirty = true; }, { passive: true });
-    document.addEventListener('visibilitychange', function () {
+    // Se para con la pestaña oculta Y con el lienzo fuera de la vista: la landing tiene scroll
+    // y la arena sólo vive en la primera pantalla. Antes de arrancar no se lanza ningún frame.
+    var onScreen = true, arrancado = false;
+    function reevaluar() {
       var was = !running;
-      running = !document.hidden;
-      if (running && was) requestAnimationFrame(frame);
-    });
+      running = onScreen && !document.hidden;
+      if (running && was && arrancado) requestAnimationFrame(frame);
+    }
+    document.addEventListener('visibilitychange', reevaluar);
+    if ('IntersectionObserver' in global) {
+      new IntersectionObserver(function (es) {
+        onScreen = es[es.length - 1].isIntersecting;
+        reevaluar();
+      }).observe(canvas);
+    }
 
     // ⚠ layout() ANTES de sembrar: con W y H a cero salen todos apilados en la esquina.
     layout();
@@ -386,7 +396,6 @@
     // rampa por si sola NO quitaba el tiron de la entrada: hay que no dibujar todavia.
     // ⚠ Con red de seguridad: un intento anterior con requestIdleCallback no disparaba en
     // algunos contextos y dejaba la arena en negro para siempre. 'load' + temporizador.
-    var arrancado = false;
     function arrancar() {
       if (arrancado) return;
       arrancado = true;

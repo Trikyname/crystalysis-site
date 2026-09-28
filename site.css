@@ -1,0 +1,50 @@
+/* site.css — lo que comparten la landing y el press kit: la fuente del juego, sus tokens y las
+   superficies del navegador (seleccion, foco, scroll), que tambien son marca. */
+
+@font-face { font-family: "Space Grotesk"; src: url("fonts/SpaceGrotesk-Regular.ttf") format("truetype");
+             font-weight: 400; font-display: swap; }
+@font-face { font-family: "Space Grotesk"; src: url("fonts/SpaceGrotesk-Medium.ttf") format("truetype");
+             font-weight: 500; font-display: swap; }
+@font-face { font-family: "Space Grotesk"; src: url("fonts/SpaceGrotesk-Bold.ttf") format("truetype");
+             font-weight: 700; font-display: swap; }
+
+:root {
+  /* Tokens del juego (UI/Tokens.uss). La web no se inventa la marca. */
+  --arena:   #0A0D11;
+  --arena-2: #10151B;
+  --linea:   #1E252E;
+  --cian:    #59D9F2;
+  --cian-hi: #7EE5FA;
+  --ambar:   #F4CB6E;
+  --texto-1: #EAF2F6;
+  --texto-2: #C3D0D8;
+  --texto-3: #8A99A4;
+  --sobre-cian: #06171D;
+  --fuente: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+  accent-color: var(--cian);
+}
+
+::selection { background: var(--cian); color: var(--sobre-cian); }
+html { scrollbar-color: #2A333D var(--arena); }
+:focus-visible { outline: 2px solid var(--cian); outline-offset: 4px; border-radius: 4px; }
+a { text-underline-offset: .22em; text-decoration-thickness: 1px; }
+
+/* El wordmark del menu: CRYSTAL en blanco, YSIS en cian, muy espaciado. */
+.wordmark { font-family: var(--fuente); font-weight: 700; letter-spacing: .17em; color: var(--texto-1);
+            margin: 0; line-height: 1.05; }
+.wordmark span { color: var(--cian); }
+
+/* El boton del menu: pildora cian con texto oscuro y un triangulo delante. */
+.cta { display: inline-flex; align-items: center; gap: 12px; background: var(--cian);
+       color: var(--sobre-cian); font-weight: 700; letter-spacing: .08em; text-decoration: none;
+       border-radius: 999px; padding: 15px 34px; font-size: 15px; text-transform: uppercase;
+       box-shadow: 0 8px 30px -6px rgba(89,217,242,.45);
+       transition: background .15s, transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s; }
+.cta:hover { background: var(--cian-hi); transform: translateY(-2px);
+             box-shadow: 0 14px 36px -8px rgba(89,217,242,.55); }
+.cta svg { flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cta, .cta:hover { transition: none; transform: none; }
+}

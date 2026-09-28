@@ -4,114 +4,116 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crystalysis — Press Kit</title>
-<meta name="description" content="Press kit for Crystalysis: fact sheet, screenshots, downloadable trailer, logos and contact. Free to use, no sign-up.">
+<meta name="description" content="Press kit for Crystalysis: fact sheet, description, trailer, screenshots, logos and contact. Free to use, no sign-up.">
 <meta property="og:title" content="Crystalysis — Press Kit">
-<meta property="og:description" content="A fast-paced slingshot roguelite about protecting your crystal from certain demise. Screenshots, trailer and logos, free to use.">
-<meta property="og:image" content="press/crystalysis-keyart-1024x500.png">
+<meta property="og:description" content="A fast-paced slingshot game with survivors-like builds and roguelite elements. Trailer, screenshots and logos, free to use.">
+<meta property="og:image" content="https://trikyname.github.io/crystalysis-site/img/og-1232x706.jpg">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="press/crystalysis-icon-512.png">
+<link rel="preload" href="fonts/SpaceGrotesk-Bold.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="site.css">
 <style>
-  :root {
-    /* Tokens del juego. La cabecera los usa siempre; el documento tiene ademas modo claro,
-       porque un periodista puede imprimirlo o leerlo en un portatil en blanco. */
-    --arena: #0A0D11; --cian: #59D9F2; --ambar: #F4CB6E;
-    --g-1: #EAF2F6; --g-2: #C3D0D8; --g-3: #8A99A4;
-
-    --fondo: #0A0D11; --panel: #12171D; --linea: #1C2129;
-    --texto: #DDE6EB; --texto-2: #94A3AD; --acento: #59D9F2;
-    color-scheme: dark light;
-  }
+  /* La cabecera es siempre la arena; el documento tiene ademas modo claro, porque un periodista
+     puede imprimirlo o leerlo en un portatil en blanco. */
+  :root { --fondo: var(--arena); --panel: var(--arena-2); --borde: var(--linea);
+          --texto: var(--texto-1); --suave: #9FAEB8; --acento: var(--cian); color-scheme: dark light; }
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) {
-      --fondo: #F4F6F8; --panel: #FFFFFF; --linea: #DCE2E8;
-      --texto: #16202A; --texto-2: #5A6874; --acento: #0E7A8F;
+      --fondo: #F4F6F8; --panel: #FFFFFF; --borde: #DCE2E8;
+      --texto: #16202A; --suave: #56636E; --acento: #0B6F82;
     }
   }
 
   * { box-sizing: border-box; }
-  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0;
-         background: var(--fondo); color: var(--texto); line-height: 1.65; }
+  body { font-family: var(--fuente); margin: 0; background: var(--fondo); color: var(--texto); line-height: 1.65; }
+  img { display: block; max-width: 100%; height: auto; }
 
-  /* Alterna EN/ES. Se traduce la pagina ENTERA, no un resumen: el toggle sustituye a la
-     version en linea, que duplicaba el largo y obligaba a pasar por delante del ingles. */
+  /* Alterna EN/ES. Se traduce la pagina ENTERA, no un resumen. */
   html[data-lang="en"] .es, html[data-lang="es"] .en { display: none; }
 
   /* ── Cabecera: el menu principal del juego ──────────────────────────────────────────── */
-  .hero { position: relative; background: var(--arena); overflow: hidden;
-          border-bottom: 1px solid var(--linea); }
-  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .hero .veil { position: absolute; inset: 0; pointer-events: none;
-                background: linear-gradient(to bottom, rgba(10,13,17,0) 38%, rgba(10,13,17,.62) 66%,
-                                                       rgba(10,13,17,.94) 100%); }
-  .hero .inner { position: relative; max-width: 880px; margin: 0 auto;
-                 padding: 40px 24px 34px; text-align: center; pointer-events: none; }
+  .hero { position: relative; background: var(--arena); overflow: hidden; isolation: isolate;
+          border-bottom: 1px solid var(--linea); color: var(--texto-2); }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: -2; }
+  .hero .veil { position: absolute; inset: 0; pointer-events: none; z-index: -1;
+                background: linear-gradient(to bottom, rgba(10,13,17,0) 34%, rgba(10,13,17,.66) 62%,
+                                                       rgba(10,13,17,.95) 100%); }
+  .hero .inner { max-width: 880px; margin: 0 auto; padding: 40px 24px 40px; text-align: center; pointer-events: none; }
   .hero .inner a, .hero .inner button, .hero .gem { pointer-events: auto; }
-  .hero .gem { width: 152px; height: 152px; margin: -18px auto -22px; cursor: pointer; border-radius: 50%; }
-  .hero .gem:focus-visible { outline: 2px solid var(--cian); outline-offset: 6px; }
-  .hero h1 { font-size: clamp(27px, 6vw, 42px); font-weight: 800; letter-spacing: .17em;
-             margin: 0; color: var(--g-1); }
-  .hero h1 span { color: var(--cian); }
-  .hero .eyebrow { color: var(--g-3); letter-spacing: .3em; font-size: 11px;
-                   text-transform: uppercase; margin: 12px 0 0; }
-  .hero .line { color: var(--g-2); max-width: 46ch; margin: 18px auto 0; font-size: 15px;
-              text-wrap: balance; }
+  .hero .gem { width: 152px; height: 152px; margin: -18px auto 4px; cursor: pointer; border-radius: 50%; }
+  .hero h1 { font-size: clamp(27px, 6vw, 44px); }
+  .hero .what { color: var(--texto-3); letter-spacing: .24em; font-size: 12px; text-transform: uppercase; margin: 12px 0 0; }
+  .hero .line { color: var(--texto-1); max-width: 44ch; margin: 18px auto 0; font-size: clamp(16px, 2vw, 18px);
+                text-wrap: balance; }
 
-  .langbar { display: flex; justify-content: center; gap: 6px; margin-top: 24px; }
-  .langbar button { font: inherit; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-                    background: transparent; color: var(--g-3);
-                    border: 1px solid rgba(150,164,175,.34); border-radius: 999px;
-                    padding: 7px 17px; cursor: pointer; transition: .15s; }
-  .langbar button:hover { color: var(--g-1); border-color: rgba(150,164,175,.7); }
-  .langbar button[aria-pressed="true"] { background: var(--cian); border-color: var(--cian);
-                                         color: #06171D; font-weight: 700; }
+  .langbar { display: inline-flex; gap: 4px; margin-top: 24px; padding: 4px; border-radius: 999px;
+             border: 1px solid #2A333D; }
+  .langbar button { font: inherit; font-size: 13px; font-weight: 500; letter-spacing: .06em;
+                    background: transparent; color: var(--texto-3); border: 0; border-radius: 999px;
+                    padding: 6px 16px; cursor: pointer; transition: color .15s, background .15s; }
+  .langbar button:hover { color: var(--texto-1); }
+  .langbar button[aria-pressed="true"] { background: var(--cian); color: var(--sobre-cian); font-weight: 700; }
 
-  .dl { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; }
-  .dl a { display: inline-flex; align-items: baseline; gap: 8px; text-decoration: none;
-          background: rgba(89,217,242,.09); border: 1px solid rgba(89,217,242,.34);
-          border-radius: 999px; padding: 10px 20px; font-size: 14px; color: var(--g-1);
-          transition: background .15s; }
-  .dl a:hover { background: rgba(89,217,242,.2); }
-  .dl a i { color: var(--g-3); font-style: normal; font-size: 12px; }
-  .dl a.primary { background: var(--cian); border-color: var(--cian); color: #06171D; font-weight: 700; }
-  .dl a.primary i { color: rgba(6,23,29,.62); }
-  .dl a.primary:hover { background: #7EE5FA; }
+  .dl { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 14px; margin-top: 26px; }
+  .dl .cta { padding: 13px 26px; font-size: 14px; }
+  .dl .file { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--texto-1);
+              border: 1px solid #2E3843; border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 500;
+              transition: border-color .15s, color .15s; }
+  .dl .file:hover { border-color: var(--cian); color: var(--cian-hi); }
+  .dl .file small { color: var(--texto-3); font-size: 12px; font-weight: 400; }
 
   /* ── Documento ──────────────────────────────────────────────────────────────────────── */
   main { max-width: 880px; margin: 0 auto; padding: 8px 24px 90px; }
-  h2 { font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--texto-2);
-       margin: 56px 0 0; padding-bottom: 10px; border-bottom: 1px solid var(--linea); }
-  h3 { font-size: 15px; margin: 26px 0 0; }
+  h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; letter-spacing: -.005em; color: var(--texto);
+       margin: 64px 0 0; padding-bottom: 12px; border-bottom: 1px solid var(--borde); line-height: 1.2; }
+  h3 { font-size: 16px; font-weight: 700; margin: 28px 0 0; }
+  main p, main li { max-width: 68ch; }
   a { color: var(--acento); }
-  .meta { color: var(--texto-2); font-size: 14px; }
+  .meta { color: var(--suave); font-size: 14px; }
 
-  .contact { background: var(--panel); border: 1px solid var(--linea);
-             border-left: 3px solid var(--acento); border-radius: 6px;
-             padding: 17px 21px; margin: 26px 0; }
-  .contact b { color: var(--acento); }
+  .contact { background: var(--panel); border: 1px solid var(--borde); border-radius: 10px;
+             padding: 18px 22px; margin: 30px 0; }
+  .contact b { color: var(--texto); }
 
   table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 15px; }
-  td { border-bottom: 1px solid var(--linea); padding: 9px 12px 9px 0; vertical-align: top; }
-  td:first-child { color: var(--texto-2); width: 32%; }
+  th, td { border-bottom: 1px solid var(--borde); padding: 10px 14px 10px 0; vertical-align: top; text-align: left; }
+  th { color: var(--suave); font-weight: 400; width: 30%; }
+  td small { color: var(--suave); font-size: 13px; }
 
-  blockquote { margin: 14px 0; padding: 0 0 0 17px; border-left: 3px solid var(--linea); }
+  blockquote { margin: 14px 0; padding: 2px 0 2px 18px; border-left: 3px solid var(--acento); }
 
-  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
-           gap: 14px; margin: 20px 0; }
-  .shots img { width: 100%; border-radius: 6px; border: 1px solid var(--linea); display: block; }
+  .video { position: relative; aspect-ratio: 16 / 9; margin: 22px 0 0; border-radius: 10px; overflow: hidden; background: #000; }
+  .video button { all: unset; cursor: pointer; position: absolute; inset: 0; display: block; }
+  .video img { width: 100%; height: 100%; object-fit: cover; }
+  .video .play { position: absolute; left: 34%; top: 50%; translate: -50% -50%; width: 76px; height: 76px;
+                 border-radius: 50%; background: var(--cian); color: var(--sobre-cian); display: grid; place-items: center;
+                 transition: transform .25s cubic-bezier(.16,1,.3,1); }
+  .video button:hover .play { transform: scale(1.08); }
+  .video button:focus-visible { outline: 2px solid var(--cian); outline-offset: -4px; }
+  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-  .art { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
-         gap: 18px; margin: 20px 0; }
+  .shots { display: grid; gap: 14px; margin: 20px 0; }
+  .shots.wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .shots.tall { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .shots a { display: block; border-radius: 8px; overflow: hidden; border: 1px solid var(--borde); }
+  .shots.wide a:first-child { grid-column: 1 / -1; }
+  .shots a:hover { border-color: var(--acento); }
+
+  .art { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; margin: 22px 0; }
   .art figure { margin: 0; }
-  .art .ondark  { background: #0A0D11; border: 1px solid var(--linea); border-radius: 6px; padding: 14px; }
-  .art .onlight { background: #F2F5F9; border: 1px solid var(--linea); border-radius: 6px; padding: 14px; }
-  .art img { width: 100%; display: block; }
-  .art figcaption { color: var(--texto-2); font-size: 13px; margin-top: 8px; }
+  .art .ondark  { background: #0A0D11; border: 1px solid var(--borde); border-radius: 8px; padding: 14px; }
+  .art .onlight { background: #F2F5F9; border: 1px solid var(--borde); border-radius: 8px; padding: 14px; }
+  .art .flush img { border-radius: 8px; border: 1px solid var(--borde); }
+  .art .span { grid-column: 1 / -1; }
+  @media (max-width: 560px) { .shots.wide { grid-template-columns: 1fr; } }
+  .art figcaption { color: var(--suave); font-size: 14px; margin-top: 9px; }
 
-  .video { position: relative; padding-bottom: 56.25%; height: 0; margin: 20px 0; }
-  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 6px; }
+  ul li { margin-bottom: 10px; }
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--borde); color: var(--suave); font-size: 14px; }
 
-  ol li, ul li { margin-bottom: 10px; }
-  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--linea);
-           color: var(--texto-2); font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { .video .play { transition: none; } .video button:hover .play { transform: none; } }
+  @media print { .hero canvas, .langbar, .dl, .video { display: none; } .hero { background: none; color: #000; } }
 </style>
 </head>
 <body>
@@ -121,26 +123,28 @@
   <div class="veil"></div>
   <div class="inner">
     <div class="gem" id="gem" role="button" tabindex="0" aria-label="Break the crystal"></div>
-    <h1>CRYSTAL<span>YSIS</span></h1>
-    <p class="eyebrow"><span class="en">Press kit</span><span class="es">Kit de prensa</span></p>
+    <h1 class="wordmark">CRYSTAL<span>YSIS</span></h1>
+    <p class="what"><span class="en">Press kit</span><span class="es">Kit de prensa</span></p>
     <p class="line">
-      <span class="en">Pull back, let go, and watch one ball tear a hole through the horde. A fast-paced slingshot roguelite about protecting your crystal from certain demise.</span>
-      <span class="es">Estiras, sueltas, y ves cómo una sola bola abre un agujero en la horda. Un roguelite de tirachinas rápido que va de proteger tu cristal de una destrucción segura.</span>
+      <span class="en">Charge your ball and ricochet it across the arena at top speeds to defend your crystal.</span>
+      <span class="es">Carga tu bola y hazla rebotar por toda la arena a máxima velocidad para defender tu cristal.</span>
     </p>
 
-    <div class="langbar">
+    <div class="langbar" role="group" aria-label="Language">
       <button type="button" data-set="en" aria-pressed="true">English</button>
       <button type="button" data-set="es" aria-pressed="false">Español</button>
     </div>
 
     <div class="dl">
-      <a class="primary" href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">
-        <span class="en">▶ Play the game</span><span class="es">▶ Jugar</span>
-        <i><span class="en">Google Play, free</span><span class="es">Google Play, gratis</span></i></a>
-      <a href="press/crystalysis-trailer.mp4" download>
-        <span class="en">⬇ Trailer</span><span class="es">⬇ Tráiler</span> <i>MP4, 76 MB</i></a>
-      <a href="press/crystalysis-press-images.zip" download>
-        <span class="en">⬇ All images</span><span class="es">⬇ Todas las imágenes</span> <i>ZIP, 4.4 MB</i></a>
+      <a class="cta" href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">
+        <svg width="12" height="14" viewBox="0 0 13 15" aria-hidden="true"><path d="M1 1 L12 7.5 L1 14 Z" fill="currentColor"/></svg>
+        <span class="en">Play on Google Play</span><span class="es">Jugar en Google Play</span></a>
+      <a class="file" href="press/crystalysis-trailer.mp4" download>
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V9 M3.5 5.8 L7 9.3 L10.5 5.8 M1.5 12.5 H12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="en">Trailer</span><span class="es">Tráiler</span> <small>MP4, 46 MB</small></a>
+      <a class="file" href="press/crystalysis-press-images.zip" download>
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V9 M3.5 5.8 L7 9.3 L10.5 5.8 M1.5 12.5 H12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="en">All images</span><span class="es">Todas las imágenes</span> <small>ZIP, 7.8 MB</small></a>
     </div>
   </div>
 </header>
@@ -149,209 +153,239 @@
 
 <div class="contact">
   <span class="en">
-    <b>Press contact</b> — Álvaro Colom (Trikyname) · <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a><br>
-    <b>Everything on this page is free to download and use.</b> No sign-up, no embargo, no permission
-    needed. You may monetise video and streams of the game.
+    <b>Press contact:</b> Álvaro Colom (Trikyname), <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a><br>
+    Everything on this page is free to download and use without asking or signing up, and there is
+    no embargo. You may monetise videos and streams of the game.
   </span>
   <span class="es">
-    <b>Contacto de prensa</b> — Álvaro Colom (Trikyname) · <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a><br>
-    <b>Todo lo de esta página se puede descargar y usar libremente.</b> Sin registro, sin embargo y
-    sin pedir permiso. Puedes monetizar vídeos y directos del juego.
+    <b>Contacto de prensa:</b> Álvaro Colom (Trikyname), <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a><br>
+    Todo lo de esta página se puede descargar y usar libremente, sin registrarse ni pedir permiso,
+    y no hay embargo. Puedes monetizar vídeos y directos del juego.
   </span>
 </div>
 
 <h2><span class="en">Fact sheet</span><span class="es">Ficha técnica</span></h2>
 
 <table class="en">
-  <tr><td>Title</td><td><b>Crystalysis</b></td></tr>
-  <tr><td>Developer</td><td>Álvaro Colom, who works as <b>Trikyname</b> — solo developer</td></tr>
-  <tr><td>Based in</td><td>Spain</td></tr>
-  <tr><td>Release</td><td>Open testing on Google Play since September 2026</td></tr>
-  <tr><td>Platform</td><td>Android · <span class="meta">PC (Steam) and iOS planned</span></td></tr>
-  <tr><td>Price</td><td>Free, with optional purchases. No forced ads.</td></tr>
-  <tr><td>Genre</td><td>Roguelite · survivors-like · arena defence</td></tr>
-  <tr><td>Modes</td><td>Endless score attack · a bounded run with a boss · a daily run shared by every player</td></tr>
-  <tr><td>Languages</td><td>13 — English, Spanish, German, French, Italian, Portuguese (BR), Polish, Turkish, Indonesian, Vietnamese, Japanese, Korean, Simplified Chinese</td></tr>
-  <tr><td>Engine</td><td>Unity 6, URP 2D</td></tr>
-  <tr><td>Store page</td><td><a href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">Google Play</a></td></tr>
-  <tr><td>Trailer</td><td><a href="https://www.youtube.com/watch?v=dIeHYaN8lmE">YouTube</a> · <a href="press/crystalysis-trailer.mp4" download>direct MP4 download</a></td></tr>
-  <tr><td>Contact</td><td><a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a></td></tr>
+  <tr><th scope="row">Title</th><td><b>Crystalysis</b></td></tr>
+  <tr><th scope="row">Developer</th><td>Álvaro Colom, working as <b>Trikyname</b>. Solo developer, self-published.</td></tr>
+  <tr><th scope="row">Based in</th><td>Spain</td></tr>
+  <tr><th scope="row">Android</th><td>Free on <a href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">Google Play</a>, in open testing since September 2026. Optional ads and in-app purchases.</td></tr>
+  <tr><th scope="row">PC</th><td>Steam, Early Access. The <a href="https://store.steampowered.com/app/5282020/">store page</a> is coming soon; price to be announced. <small>No in-game purchases on PC.</small></td></tr>
+  <tr><th scope="row">iPhone and iPad</th><td>Free on the App Store, currently in review.</td></tr>
+  <tr><th scope="row">Genre</th><td>Slingshot action · survivors-like · roguelite</td></tr>
+  <tr><th scope="row">Modes</th><td>Endless runs · a Timed Run that ends in a boss fight · a daily run on a seed every player shares</td></tr>
+  <tr><th scope="row">Controls</th><td>Mouse, controller or touch</td></tr>
+  <tr><th scope="row">Online</th><td>Plays fully offline. An internet connection is only needed for the online leaderboards.</td></tr>
+  <tr><th scope="row">Languages</th><td>13: English, Spanish, German, French, Italian, Portuguese (Brazil), Polish, Turkish, Indonesian, Vietnamese, Japanese, Korean, Simplified Chinese</td></tr>
+  <tr><th scope="row">Engine</th><td>Unity 6</td></tr>
+  <tr><th scope="row">Trailer</th><td><a href="https://youtu.be/qAkrmIxKML0">YouTube</a> · <a href="press/crystalysis-trailer.mp4" download>MP4, 16:9</a> · <a href="press/crystalysis-trailer-vertical.mp4" download>MP4, vertical 9:16</a></td></tr>
+  <tr><th scope="row">AI use</th><td>The art is drawn by the game's code and every sound is synthesized by the game. The interface icons were designed with an AI design tool and edited by the developer. The text is written in English and Spanish and machine-translated into the other eleven languages. Code and store copy are written with an AI assistant and edited by the developer.</td></tr>
+  <tr><th scope="row">Contact</th><td><a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a></td></tr>
 </table>
 
 <table class="es">
-  <tr><td>Título</td><td><b>Crystalysis</b></td></tr>
-  <tr><td>Desarrollador</td><td>Álvaro Colom, que firma como <b>Trikyname</b> — desarrollador en solitario</td></tr>
-  <tr><td>Ubicación</td><td>España</td></tr>
-  <tr><td>Lanzamiento</td><td>Prueba abierta en Google Play desde septiembre de 2026</td></tr>
-  <tr><td>Plataforma</td><td>Android · <span class="meta">previstas PC (Steam) e iOS</span></td></tr>
-  <tr><td>Precio</td><td>Gratis, con compras opcionales. Sin anuncios forzados.</td></tr>
-  <tr><td>Género</td><td>Roguelite · survivors-like · defensa de arena</td></tr>
-  <tr><td>Modos</td><td>Endless por puntuación · una partida acotada con jefe · una diaria común a todos los jugadores</td></tr>
-  <tr><td>Idiomas</td><td>13 — inglés, español, alemán, francés, italiano, portugués (BR), polaco, turco, indonesio, vietnamita, japonés, coreano y chino simplificado</td></tr>
-  <tr><td>Motor</td><td>Unity 6, URP 2D</td></tr>
-  <tr><td>Ficha</td><td><a href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">Google Play</a></td></tr>
-  <tr><td>Tráiler</td><td><a href="https://www.youtube.com/watch?v=dIeHYaN8lmE">YouTube</a> · <a href="press/crystalysis-trailer.mp4" download>descarga directa en MP4</a></td></tr>
-  <tr><td>Contacto</td><td><a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a></td></tr>
+  <tr><th scope="row">Título</th><td><b>Crystalysis</b></td></tr>
+  <tr><th scope="row">Desarrollador</th><td>Álvaro Colom, que firma como <b>Trikyname</b>. Desarrollador en solitario y autoeditado.</td></tr>
+  <tr><th scope="row">Ubicación</th><td>España</td></tr>
+  <tr><th scope="row">Android</th><td>Gratis en <a href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">Google Play</a>, en prueba abierta desde septiembre de 2026. Anuncios y compras opcionales.</td></tr>
+  <tr><th scope="row">PC</th><td>Steam, en acceso anticipado. La <a href="https://store.steampowered.com/app/5282020/">ficha</a> está en «Próximamente»; precio por anunciar. <small>Sin compras dentro del juego en PC.</small></td></tr>
+  <tr><th scope="row">iPhone y iPad</th><td>Gratis en la App Store, ahora en revisión.</td></tr>
+  <tr><th scope="row">Género</th><td>Acción con tirachinas · survivors-like · roguelite</td></tr>
+  <tr><th scope="row">Modos</th><td>Partidas sin fin · una Partida con final que acaba contra un jefe · una partida diaria con una semilla que comparte todo el mundo</td></tr>
+  <tr><th scope="row">Controles</th><td>Ratón, mando o táctil</td></tr>
+  <tr><th scope="row">Conexión</th><td>Se juega totalmente sin conexión. Sólo hace falta internet para las clasificaciones online.</td></tr>
+  <tr><th scope="row">Idiomas</th><td>13: inglés, español, alemán, francés, italiano, portugués (Brasil), polaco, turco, indonesio, vietnamita, japonés, coreano y chino simplificado</td></tr>
+  <tr><th scope="row">Motor</th><td>Unity 6</td></tr>
+  <tr><th scope="row">Tráiler</th><td><a href="https://youtu.be/qAkrmIxKML0">YouTube</a> · <a href="press/crystalysis-trailer.mp4" download>MP4, 16:9</a> · <a href="press/crystalysis-trailer-vertical.mp4" download>MP4, vertical 9:16</a></td></tr>
+  <tr><th scope="row">Uso de IA</th><td>El arte lo dibuja el código del juego y todos los sonidos los sintetiza el propio juego. Los iconos de interfaz se diseñaron con una herramienta de diseño con IA y los editó el desarrollador. El texto se escribe en inglés y español y se traduce automáticamente a los otros once idiomas. El código y los textos de las tiendas se escriben con un asistente de IA y los edita el desarrollador.</td></tr>
+  <tr><th scope="row">Contacto</th><td><a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a></td></tr>
 </table>
 
 <h2><span class="en">Description</span><span class="es">Descripción</span></h2>
 
 <div class="en">
-  <h3>One paragraph</h3>
-  <blockquote>Pull back, let go, and watch one ball tear a hole through the horde. Crystalysis is
-  a fast-paced slingshot roguelite about protecting your crystal from certain demise. The ball never
-  dies but it does slow down, and damage is speed, so a run is a fight to keep it moving. Between
-  waves you draft weapons, passives and evolutions survivors-style, and the crystal permanently
-  unlocks new arsenal as you prove you can use it.</blockquote>
+  <h3>Short</h3>
+  <blockquote>Crystalysis is a fast-paced slingshot game with survivors-like builds and roguelite
+  elements. Defend your crystal from waves of enemies. Every level you pick up upgrades. Stack them
+  into a build, mix passives and weapons and evolve them to achieve your crystal aspects.</blockquote>
 
   <h3>Long</h3>
-  <p>Pull back, let go, and watch one ball tear a hole through the horde. Crystalysis is a
-  fast-paced slingshot roguelite about protecting your crystal from certain demise.</p>
-  <p>You defend a single crystal at the heart of the arena from endless waves closing in from every
-  side. Your ball is immortal, but it slows down — and damage is speed. Slingshot it, ricochet it
-  off the walls, catch it mid-flight to re-aim, and fight to keep it fast. Let it crawl and the
-  crystal starts to bleed.</p>
-  <p>Between waves you draft weapons, passives and evolutions in the moment, survivors-style. Prove
-  you have mastered a trick and the crystal permanently unlocks the next one: an arsenal earned by
-  playing, not by grinding.</p>
-  <p>Holding the aim freezes the world for a few seconds. Then it starts again, ready or not.</p>
-  <p>It plays in portrait with one thumb, works fully offline, and speaks thirteen languages.</p>
+  <p>Charge your ball and ricochet it across the arena at top speeds to defend your crystal!</p>
+  <p>Crystalysis is a fast-paced slingshot game with survivors-like builds and roguelite elements.
+  Your crystal sits in the middle of the arena and waves of enemies come for it. Every level you
+  pick up upgrades. Stack them into a build, mix passives and weapons and evolve them to achieve
+  your crystal aspects.</p>
+  <p>Unlock upgrades and weapons, level them up past their limit and reach their full potential.
+  Combine passive tags from multiple weapons and make your build insurmountable. Resist, hold,
+  burst the waves.</p>
 </div>
 
 <div class="es">
-  <h3>Un párrafo</h3>
-  <blockquote>Estiras, sueltas, y ves cómo una sola bola abre un agujero en la horda. Crystalysis
-  es un roguelite de tirachinas rápido que va de proteger tu cristal de una destrucción segura. La
-  bola nunca muere pero sí se frena, y el daño es la velocidad, así que la partida es una pelea por
-  mantenerla en movimiento. Entre oleadas eliges armas, pasivas y evoluciones al estilo survivors, y
-  el cristal desbloquea arsenal nuevo de forma permanente según demuestras que sabes usarlo.</blockquote>
+  <h3>Corta</h3>
+  <blockquote>Crystalysis es un juego de tirachinas trepidante con builds estilo survivors y
+  elementos roguelite. Defiende tu cristal de las oleadas de enemigos. En cada nivel eliges mejoras.
+  Júntalas en una build, combina pasivas y armas y haz que evolucionen hasta conseguir los aspectos
+  de tu cristal.</blockquote>
 
   <h3>Larga</h3>
-  <p>Estiras, sueltas, y ves cómo una sola bola abre un agujero en la horda. Crystalysis es un
-  roguelite de tirachinas rápido que va de proteger tu cristal de una destrucción segura.</p>
-  <p>Defiendes un único cristal en el centro de la arena de oleadas infinitas que se cierran por
-  todos los lados. Tu bola es inmortal, pero se frena — y el daño es la velocidad. Lánzala,
-  rebótala en las paredes, cógela en pleno vuelo para volver a apuntar y pelea por mantenerla
-  rápida. Déjala arrastrarse y el cristal empieza a sangrar.</p>
-  <p>Entre oleadas eliges armas, pasivas y evoluciones sobre la marcha, al estilo survivors.
-  Demuestra que dominas un truco y el cristal te desbloquea el siguiente de forma permanente: un
-  arsenal que se gana jugando, no repitiendo.</p>
-  <p>Mantener el apuntado congela el mundo unos segundos. Luego arranca otra vez, estés listo o no.</p>
-  <p>Se juega en vertical con un dedo, funciona sin conexión y habla trece idiomas.</p>
+  <p>¡Carga tu bola y hazla rebotar por toda la arena a máxima velocidad para defender tu cristal!</p>
+  <p>Crystalysis es un juego de tirachinas trepidante con builds estilo survivors y elementos
+  roguelite. Tu cristal está en el centro de la arena y las oleadas de enemigos van a por él. En
+  cada nivel eliges mejoras. Júntalas en una build, combina pasivas y armas y haz que evolucionen
+  hasta conseguir los aspectos de tu cristal.</p>
+  <p>Desbloquea mejoras y armas, súbelas de nivel más allá de su límite y llévalas a todo su
+  potencial. Combina las etiquetas pasivas de varias armas y haz que tu build sea insuperable.
+  Resiste, aguanta, revienta las oleadas.</p>
 </div>
 
-<h2><span class="en">What makes it different</span><span class="es">Qué lo distingue</span></h2>
+<h2><span class="en">What sets it apart</span><span class="es">Qué lo distingue</span></h2>
 
-<ol class="en">
-  <li><b>One ball, not an army.</b> All your damage goes through a single ricocheting projectile
-  that you aim yourself. Damage is proportional to its speed, so a run is a fight to keep it moving.</li>
-  <li><b>The crystal teaches the ball.</b> Permanent unlocks are earned by <i>demonstrating</i> that
-  you can use something, never by accumulating currency.</li>
-  <li><b>A daily run identical for everyone on earth.</b> Same map, same weapons, same seed. The only
-  variable is how you play it, and it has its own leaderboard.</li>
-  <li><b>Deliberate minimalism.</b> Vector art, colour that carries mechanical meaning, and audio
-  that is <b>100% synthesised by the game itself</b> — there is not a single audio sample in the build.</li>
-</ol>
+<ul class="en">
+  <li><b>Damage is speed.</b> The ball never dies, but it slows down, and how hard it hits depends
+  on how fast it is going. A run is a fight to keep it moving.</li>
+  <li><b>Six artifacts, six ways to play.</b> The Ball, the Cannonball, the Katana, the Saw and two
+  versions of the Tether change how you control the ball, not how big your numbers are.</li>
+  <li><b>Builds that feed each other.</b> Carry the right weapon with the right passive and it
+  rebuilds itself into something new. Tags like fire, ice, kinetic, orbitals, summons and salvo
+  cross over, so a passive taken for one weapon often improves another.</li>
+  <li><b>A daily run on the same seed for everyone</b>, next to endless runs and a Timed Run that
+  ends in a boss fight.</li>
+  <li><b>Drawn and scored by its own code.</b> The visuals are procedural and every sound is
+  synthesized by the game at runtime.</li>
+</ul>
 
-<ol class="es">
-  <li><b>Una sola bola, no un ejército.</b> Todo el daño pasa por un proyectil que rebota y que
-  diriges tú. El daño es proporcional a su velocidad, así que la partida es una lucha por no dejar
-  que se frene.</li>
-  <li><b>El cristal enseña a la bola.</b> Los desbloqueos permanentes se ganan <i>demostrando</i> que
-  sabes usar algo, nunca acumulando moneda.</li>
-  <li><b>Una diaria idéntica para todo el mundo.</b> Mismo mapa, mismas armas, misma semilla. Lo
-  único que cambia es cómo la juegas, y tiene clasificación propia.</li>
-  <li><b>Minimalismo deliberado.</b> Arte vectorial, color con significado mecánico y sonido
-  <b>cien por cien sintetizado por el propio juego</b> — no hay un solo sample en la build.</li>
-</ol>
+<ul class="es">
+  <li><b>El daño es la velocidad.</b> La bola nunca muere, pero se frena, y lo fuerte que golpea
+  depende de lo rápido que va. Una partida es una pelea por mantenerla en movimiento.</li>
+  <li><b>Seis artefactos, seis formas de jugar.</b> La Bola, la Bola de Cañón, la Katana, la
+  Sierra y dos versiones de la Cuerda cambian cómo controlas la bola, no el tamaño de tus números.</li>
+  <li><b>Builds que se alimentan entre sí.</b> Lleva el arma adecuada con la pasiva adecuada y se
+  rehace en algo nuevo. Etiquetas como fuego, hielo, cinético, órbita, invocación y salva se
+  cruzan, así que una pasiva que coges para un arma a menudo mejora otra.</li>
+  <li><b>Una partida diaria con la misma semilla para todos</b>, junto a partidas sin fin y una
+  Partida con final que acaba contra un jefe.</li>
+  <li><b>Dibujado y sonorizado por su propio código.</b> Los visuales son procedurales y todos los
+  sonidos los sintetiza el juego en tiempo de ejecución.</li>
+</ul>
 
 <h2><span class="en">The developer</span><span class="es">El desarrollador</span></h2>
 
 <div class="en">
-  <p>Crystalysis is made by one person in Spain. It is self-funded, has no publisher and no revenue
-  to date. It started as a prototype to answer a single design question — <i>what happens to a horde
-  survival game if the world stops while you aim?</i> — and kept going because the answer turned out
-  to be interesting.</p>
-  <p>The whole thing is built in Unity, including the parts that would normally be bought in: every
-  sound in the game is generated procedurally at runtime, and the store artwork is rendered by the
-  game's own UI code so it can never drift from the build it advertises.</p>
+  <p>Crystalysis is made by one person in Spain. It is self-funded and has no publisher. It
+  started on Android and has been on Google Play for months; the PC version is the same game
+  rebuilt for a wide screen, with full controller support.</p>
+  <p>The store artwork is rendered by the game itself, from the same code that draws the arena,
+  so it cannot drift from the build it advertises.</p>
 </div>
 
 <div class="es">
-  <p>Crystalysis lo hace una sola persona en España. Está autofinanciado, no tiene editora y hasta
-  hoy no ha generado ingresos. Empezó como un prototipo para responder a una única pregunta de
-  diseño —<i>¿qué le pasa a un juego de supervivencia por hordas si el mundo se para mientras
-  apuntas?</i>— y siguió adelante porque la respuesta resultó interesante.</p>
-  <p>Está construido entero en Unity, incluidas las partes que normalmente se compran hechas: todos
-  los sonidos se generan proceduralmente en tiempo de ejecución, y las imágenes de la tienda las
-  dibuja el propio código de interfaz del juego, así que no pueden desincronizarse de la build que
-  anuncian.</p>
+  <p>Crystalysis lo hace una sola persona en España. Está autofinanciado y no tiene editora.
+  Empezó en Android y lleva meses en Google Play; la versión de PC es el mismo juego rehecho para
+  pantalla ancha, con compatibilidad completa con mando.</p>
+  <p>Las imágenes de las tiendas las renderiza el propio juego, con el mismo código que dibuja la
+  arena, así que no pueden desincronizarse de la build que anuncian.</p>
 </div>
 
 <h2><span class="en">Trailer</span><span class="es">Tráiler</span></h2>
-<div class="video">
-  <iframe src="https://www.youtube-nocookie.com/embed/dIeHYaN8lmE" title="Crystalysis trailer"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen loading="lazy"></iframe>
+<div class="video" id="video">
+  <button type="button" id="play-trailer" aria-label="Play the Crystalysis trailer">
+    <img src="img/trailer-poster.webp" width="1280" height="720" alt="" loading="lazy">
+    <span class="play" aria-hidden="true"><svg width="26" height="30" viewBox="0 0 13 15"><path d="M2 1 L12 7.5 L2 14 Z" fill="currentColor"/></svg></span>
+  </button>
 </div>
 <p class="meta">
-  <span class="en"><a href="press/crystalysis-trailer.mp4" download>Download the MP4</a> (76 MB) — no screen recording needed.</span>
-  <span class="es"><a href="press/crystalysis-trailer.mp4" download>Descarga el MP4</a> (76 MB) — sin tener que grabar la pantalla.</span>
+  <span class="en">Plays from YouTube. Downloads, no screen recording needed:
+    <a href="press/crystalysis-trailer.mp4" download>16:9 MP4</a> (46 MB) ·
+    <a href="press/crystalysis-trailer-vertical.mp4" download>vertical 9:16 MP4</a> (16 MB).</span>
+  <span class="es">Se reproduce desde YouTube. Descargas, sin tener que grabar la pantalla:
+    <a href="press/crystalysis-trailer.mp4" download>MP4 16:9</a> (46 MB) ·
+    <a href="press/crystalysis-trailer-vertical.mp4" download>MP4 vertical 9:16</a> (16 MB).</span>
 </p>
 
 <h2><span class="en">Screenshots</span><span class="es">Capturas</span></h2>
 <p class="meta">
-  <span class="en">Eight screenshots, 1440×2560, no watermarks. Click any one for the full-resolution PNG.</span>
-  <span class="es">Ocho capturas, 1440×2560, sin marcas de agua. Pincha en cualquiera para el PNG a resolución completa.</span>
+  <span class="en">PC, 1920×1080, from a single run (waves 4 to 29). No watermarks. Click any one for the full PNG.</span>
+  <span class="es">PC, 1920×1080, de una sola partida (oleadas 4 a 29). Sin marcas de agua. Pincha en cualquiera para el PNG completo.</span>
 </p>
-<div class="shots">
-  <a href="press/screenshots/crystalysis-01-gancho.png"><img src="press/screenshots/crystalysis-01-gancho.png" alt="Aiming: the world is frozen while the slingshot is pulled back" loading="lazy"></a>
-  <a href="press/screenshots/crystalysis-02-impacto.png"><img src="press/screenshots/crystalysis-02-impacto.png" alt="The ball hitting a horde at speed" loading="lazy"></a>
-  <a href="press/screenshots/crystalysis-03-espectaculo.png"><img src="press/screenshots/crystalysis-03-espectaculo.png" alt="A late run with several weapons firing at once" loading="lazy"></a>
-  <a href="press/screenshots/crystalysis-04-cartas.png"><img src="press/screenshots/crystalysis-04-cartas.png" alt="Drafting an upgrade between waves" loading="lazy"></a>
-  <a href="press/screenshots/crystalysis-05-cielo.png"><img src="press/screenshots/crystalysis-05-cielo.png" alt="A high tier of the endless run" loading="lazy"></a>
-  <a href="press/screenshots/crystalysis-06-caos.png"><img src="press/screenshots/crystalysis-06-caos.png" alt="The arena under full pressure" loading="lazy"></a>
-  <a href="press/screenshots/crystalysis-07-vault.png"><img src="press/screenshots/crystalysis-07-vault.png" alt="The vault of permanently unlocked content" loading="lazy"></a>
-  <a href="press/screenshots/crystalysis-08-home.png"><img src="press/screenshots/crystalysis-08-home.png" alt="The main menu" loading="lazy"></a>
+<div class="shots wide">
+  <a href="press/screenshots-pc/crystalysis-pc-04-full-screen.png"><img src="img/crystalysis-pc-04-full-screen.webp" width="1280" height="720" alt="Wave 29 on PC: the arena full of enemy trails" loading="lazy"></a>
+  <a href="press/screenshots-pc/crystalysis-pc-01-early.png"><img src="img/crystalysis-pc-01-early.webp" width="1280" height="720" alt="Wave 4, early in a run" loading="lazy"></a>
+  <a href="press/screenshots-pc/crystalysis-pc-02-ball-in-flight.png"><img src="img/crystalysis-pc-02-ball-in-flight.webp" width="1280" height="720" alt="Wave 12, the ball in flight" loading="lazy"></a>
+  <a href="press/screenshots-pc/crystalysis-pc-03-mid-run.png"><img src="img/crystalysis-pc-03-mid-run.webp" width="1280" height="720" alt="Wave 19, mid run" loading="lazy"></a>
+  <a href="press/screenshots-pc/crystalysis-pc-05-level-up.png"><img src="img/crystalysis-pc-05-level-up.webp" width="1280" height="720" alt="Picking an upgrade on level up" loading="lazy"></a>
+</div>
+<p class="meta">
+  <span class="en">Mobile, 1440×2560.</span>
+  <span class="es">Móvil, 1440×2560.</span>
+</p>
+<div class="shots tall">
+  <a href="press/screenshots/crystalysis-01-gancho.png"><img src="press/screenshots/crystalysis-01-gancho.png" width="1440" height="2560" alt="Aiming with the slingshot pulled back" loading="lazy"></a>
+  <a href="press/screenshots/crystalysis-02-impacto.png"><img src="press/screenshots/crystalysis-02-impacto.png" width="1440" height="2560" alt="The ball hitting a horde at speed" loading="lazy"></a>
+  <a href="press/screenshots/crystalysis-03-espectaculo.png"><img src="press/screenshots/crystalysis-03-espectaculo.png" width="1440" height="2560" alt="A late run with several weapons firing at once" loading="lazy"></a>
+  <a href="press/screenshots/crystalysis-04-cartas.png"><img src="press/screenshots/crystalysis-04-cartas.png" width="1440" height="2560" alt="Picking an upgrade" loading="lazy"></a>
+  <a href="press/screenshots/crystalysis-05-cielo.png"><img src="press/screenshots/crystalysis-05-cielo.png" width="1440" height="2560" alt="A high tier of an endless run" loading="lazy"></a>
+  <a href="press/screenshots/crystalysis-06-caos.png"><img src="press/screenshots/crystalysis-06-caos.png" width="1440" height="2560" alt="The arena under full pressure" loading="lazy"></a>
+  <a href="press/screenshots/crystalysis-07-vault.png"><img src="press/screenshots/crystalysis-07-vault.png" width="1440" height="2560" alt="The vault screen" loading="lazy"></a>
+  <a href="press/screenshots/crystalysis-08-home.png"><img src="press/screenshots/crystalysis-08-home.png" width="1440" height="2560" alt="The main menu" loading="lazy"></a>
 </div>
 
 <h2><span class="en">Logo and key art</span><span class="es">Logo y key art</span></h2>
 <div class="art">
   <figure>
-    <div class="ondark"><img src="press/crystalysis-logo-on-dark.png" alt="Crystalysis logo, white wordmark"></div>
+    <div class="ondark"><img src="press/crystalysis-logo-1280x720.png" width="1280" height="720" alt="Crystalysis logo, the wordmark with YSIS in cyan"></div>
     <figcaption>
-      <span class="en"><a href="press/crystalysis-logo-on-dark.png" download>Logo for dark backgrounds</a> — 600×400, transparent PNG.</span>
-      <span class="es"><a href="press/crystalysis-logo-on-dark.png" download>Logo para fondo oscuro</a> — 600×400, PNG transparente.</span>
+      <span class="en"><a href="press/crystalysis-logo-1280x720.png" download>Logo</a>, 1280×720, transparent PNG. The wordmark as it appears in the game.</span>
+      <span class="es"><a href="press/crystalysis-logo-1280x720.png" download>Logo</a>, 1280×720, PNG transparente. El wordmark tal como sale en el juego.</span>
     </figcaption>
   </figure>
   <figure>
-    <div class="onlight"><img src="press/crystalysis-logo-on-light.png" alt="Crystalysis logo, dark wordmark"></div>
+    <div class="ondark"><img src="press/crystalysis-logo-on-dark.png" alt="Crystalysis wordmark, light"></div>
     <figcaption>
-      <span class="en"><a href="press/crystalysis-logo-on-light.png" download>Logo for light backgrounds</a> — the wordmark inverted, for white pages and print.</span>
-      <span class="es"><a href="press/crystalysis-logo-on-light.png" download>Logo para fondo claro</a> — el wordmark invertido, para páginas blancas e impresión.</span>
+      <span class="en"><a href="press/crystalysis-logo-on-dark.png" download>Wordmark for dark backgrounds</a>, 600×400, transparent PNG.</span>
+      <span class="es"><a href="press/crystalysis-logo-on-dark.png" download>Wordmark para fondo oscuro</a>, 600×400, PNG transparente.</span>
     </figcaption>
   </figure>
   <figure>
-    <div class="ondark"><img src="press/crystalysis-icon-512.png" alt="Crystalysis app icon"></div>
+    <div class="onlight"><img src="press/crystalysis-logo-on-light.png" alt="Crystalysis wordmark, dark"></div>
     <figcaption>
-      <span class="en"><a href="press/crystalysis-icon-512.png" download>App icon</a> — 512×512, transparent PNG.</span>
-      <span class="es"><a href="press/crystalysis-icon-512.png" download>Icono de la app</a> — 512×512, PNG transparente.</span>
-    </figcaption>
-  </figure>
-</div>
-<div class="art">
-  <figure>
-    <img src="press/crystalysis-keyart-1024x500.png" alt="Crystalysis key art, wide">
-    <figcaption>
-      <span class="en"><a href="press/crystalysis-keyart-1024x500.png" download>Key art</a>, 1024×500 — the Google Play feature graphic.</span>
-      <span class="es"><a href="press/crystalysis-keyart-1024x500.png" download>Key art</a>, 1024×500 — el gráfico destacado de Google Play.</span>
+      <span class="en"><a href="press/crystalysis-logo-on-light.png" download>Wordmark for light backgrounds</a>, for white pages and print.</span>
+      <span class="es"><a href="press/crystalysis-logo-on-light.png" download>Wordmark para fondo claro</a>, para páginas blancas e impresión.</span>
     </figcaption>
   </figure>
   <figure>
-    <img src="press/crystalysis-keyart-2560x1440.png" alt="Crystalysis key art, large">
+    <div class="ondark"><img src="press/crystalysis-icon-512.png" width="512" height="512" alt="Crystalysis app icon"></div>
+    <figcaption>
+      <span class="en"><a href="press/crystalysis-icon-512.png" download>App icon</a>, 512×512 PNG.</span>
+      <span class="es"><a href="press/crystalysis-icon-512.png" download>Icono de la app</a>, 512×512 PNG.</span>
+    </figcaption>
+  </figure>
+  <figure class="flush span">
+    <img src="img/hero-1920.webp" width="1920" height="620" alt="Wide key art: the crystal and the ball's trail through a field of triangles" loading="lazy">
+    <figcaption>
+      <span class="en"><a href="press/crystalysis-hero-3840x1240.png" download>Wide key art</a>, 3840×1240, no text. Good for banners and headers.</span>
+      <span class="es"><a href="press/crystalysis-hero-3840x1240.png" download>Key art panorámico</a>, 3840×1240, sin texto. Para banners y cabeceras.</span>
+    </figcaption>
+  </figure>
+  <figure class="flush">
+    <img src="press/crystalysis-capsule-1232x706.png" width="1232" height="706" alt="Crystalysis capsule art with the logo" loading="lazy">
+    <figcaption>
+      <span class="en"><a href="press/crystalysis-capsule-1232x706.png" download>Capsule</a>, 1232×706, with the logo.</span>
+      <span class="es"><a href="press/crystalysis-capsule-1232x706.png" download>Cápsula</a>, 1232×706, con el logo.</span>
+    </figcaption>
+  </figure>
+  <figure class="flush">
+    <img src="press/crystalysis-keyart-2560x1440.png" width="2560" height="1440" alt="Crystalysis key art, 16:9" loading="lazy">
     <figcaption>
       <span class="en"><a href="press/crystalysis-keyart-2560x1440.png" download>Key art</a>, 2560×1440.</span>
       <span class="es"><a href="press/crystalysis-keyart-2560x1440.png" download>Key art</a>, 2560×1440.</span>
+    </figcaption>
+  </figure>
+  <figure class="flush">
+    <img src="press/crystalysis-keyart-1024x500.png" width="1024" height="500" alt="Crystalysis feature graphic" loading="lazy">
+    <figcaption>
+      <span class="en"><a href="press/crystalysis-keyart-1024x500.png" download>Feature graphic</a>, 1024×500, from Google Play.</span>
+      <span class="es"><a href="press/crystalysis-keyart-1024x500.png" download>Gráfico destacado</a>, 1024×500, el de Google Play.</span>
     </figcaption>
   </figure>
 </div>
@@ -359,46 +393,44 @@
 <h2><span class="en">Terms of use</span><span class="es">Condiciones de uso</span></h2>
 <ul class="en">
   <li><b>Use anything on this page freely</b> in articles, videos, streams and thumbnails. No
-  permission needed and no embargo to respect.</li>
-  <li><b>You may monetise</b> video and streams of Crystalysis, including on YouTube and Twitch.</li>
-  <li>Please don't alter the logo's proportions or colours. Everything else, crop as you like.</li>
-  <li>If you need a specific asset that isn't here — a different resolution, a clean shot of a
-  particular moment, B-roll — <b>just ask</b>. It is a solo project, so the answer comes straight
-  from the person who makes it.</li>
+  permission needed and no embargo.</li>
+  <li><b>You may monetise</b> videos and streams of Crystalysis, including on YouTube and Twitch.</li>
+  <li>Please keep the logo's proportions and colours. Crop everything else as you like.</li>
+  <li>If you need something that isn't here, like another resolution, a clean shot of a particular
+  moment or raw footage, <b>just ask</b>. It is a solo project, so the answer comes from the person
+  who makes it.</li>
 </ul>
 <ul class="es">
   <li><b>Usa libremente cualquier cosa de esta página</b> en artículos, vídeos, directos y
-  miniaturas. Sin pedir permiso y sin ningún embargo que respetar.</li>
+  miniaturas. Sin pedir permiso y sin embargo.</li>
   <li><b>Puedes monetizar</b> vídeos y directos de Crystalysis, también en YouTube y Twitch.</li>
-  <li>Por favor, no cambies las proporciones ni los colores del logo. Lo demás, recórtalo como
-  quieras.</li>
-  <li>Si necesitas algo que no está aquí —otra resolución, una captura limpia de un momento
-  concreto, metraje bruto—, <b>pídelo</b>. Es un proyecto de una persona, así que contesta quien
+  <li>Por favor, respeta las proporciones y los colores del logo. Lo demás, recórtalo como quieras.</li>
+  <li>Si necesitas algo que no está aquí, como otra resolución, una captura limpia de un momento
+  concreto o metraje en bruto, <b>pídelo</b>. Es un proyecto de una persona, así que contesta quien
   lo hace.</li>
 </ul>
 
 <div class="contact">
   <span class="en">
-    <b>Press contact</b> — Álvaro Colom (Trikyname) · <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a><br>
-    Happy to answer questions, give a design breakdown, or record something specific on request.
+    <b>Press contact:</b> Álvaro Colom (Trikyname), <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a><br>
+    Happy to answer questions, walk through the design, or record something specific.
   </span>
   <span class="es">
-    <b>Contacto de prensa</b> — Álvaro Colom (Trikyname) · <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a><br>
-    Encantado de responder preguntas, explicar el diseño por dentro o grabar algo concreto si lo
-    necesitas.
+    <b>Contacto de prensa:</b> Álvaro Colom (Trikyname), <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a><br>
+    Encantado de responder preguntas, explicar el diseño por dentro o grabar algo concreto.
   </span>
 </div>
 
 <footer>
-  <span class="en">Last updated 4 September 2026 · <a href="index.html">crystalysis-site</a> · <a href="privacy.html">Privacy policy</a></span>
-  <span class="es">Actualizado el 4 de septiembre de 2026 · <a href="index.html">crystalysis-site</a> · <a href="privacy.html">Política de privacidad</a></span>
+  <span class="en">Last updated 28 September 2026 · <a href="index.html">crystalysis-site</a> · <a href="privacy.html">Privacy policy</a></span>
+  <span class="es">Actualizado el 28 de septiembre de 2026 · <a href="index.html">crystalysis-site</a> · <a href="privacy.html">Política de privacidad</a></span>
 </footer>
 
 </main>
 
 <script src="arena.js"></script>
 <script>
-  // Idioma: manda lo que el visitante eligió; si no, el del navegador; si no, inglés.
+  // Idioma: manda lo que el visitante eligio; si no, el del navegador; si no, ingles.
   var root = document.documentElement;
   var botones = document.querySelectorAll('.langbar button');
   function setLang(l) {
@@ -415,6 +447,16 @@
   for (var i = 0; i < botones.length; i++) {
     botones[i].addEventListener('click', function () { setLang(this.dataset.set); });
   }
+
+  // El reproductor de YouTube solo se carga al pulsar: sin cookies de terceros hasta entonces.
+  document.getElementById('play-trailer').addEventListener('click', function () {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/qAkrmIxKML0?autoplay=1&rel=0';
+    f.title = 'Crystalysis trailer';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    this.replaceWith(f);
+  });
 
   Arena(document.getElementById('arena'), {
     chase: true, density: 22, gem: document.getElementById('gem'), affordance: false

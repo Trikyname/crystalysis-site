@@ -3,104 +3,325 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crystalysis — an endless slingshot survival game</title>
-<meta name="description" content="Crystalysis: slingshot an immortal ball through endless geometric hordes to defend your crystal. Free on Google Play, in open testing. Coming to Steam.">
+<title>Crystalysis — a slingshot roguelite</title>
+<meta name="description" content="Crystalysis: charge your ball and ricochet it across the arena at top speeds to defend your crystal. Free on Google Play in open testing, coming soon to Steam in Early Access.">
 <meta property="og:title" content="Crystalysis">
-<meta property="og:description" content="Pull back, let go, and watch one ball tear a hole through the horde. A fast-paced slingshot roguelite about protecting your crystal from certain demise.">
-<meta property="og:image" content="press/crystalysis-keyart-1024x500.png">
+<meta property="og:description" content="Charge your ball and ricochet it across the arena at top speeds to defend your crystal. A fast-paced slingshot game with survivors-like builds and roguelite elements.">
+<meta property="og:image" content="https://trikyname.github.io/crystalysis-site/img/og-1232x706.jpg">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="press/crystalysis-icon-512.png">
+<link rel="preload" href="fonts/SpaceGrotesk-Bold.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="site.css">
 <style>
-  :root {
-    /* Tokens del juego (UI/Tokens.uss). La web no se inventa la marca. */
-    --arena:   #0A0D11;
-    --cian:    #59D9F2;
-    --ambar:   #F4CB6E;
-    --texto-1: #EAF2F6;
-    --texto-2: #C3D0D8;
-    --texto-3: #8A99A4;
-    color-scheme: dark;
-  }
   * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0;
-         background: var(--arena); color: var(--texto-2);
-         display: flex; align-items: center; justify-content: center; text-align: center;
-         overflow-x: hidden; }
+  body { font-family: var(--fuente); margin: 0; background: var(--arena); color: var(--texto-2);
+         line-height: 1.6; overflow-x: hidden; }
+  img { display: block; max-width: 100%; height: auto; }
 
-  #arena { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
-  /* Sin viñeta radial: en el menu del juego el campo de triangulos llega hasta el borde.
-     Solo se protege la franja de abajo, que es donde vive el texto. */
-  #veil { position: fixed; inset: 0; z-index: 1; pointer-events: none;
-          background: linear-gradient(to bottom, rgba(10,13,17,0) 30%, rgba(10,13,17,.55) 46%,
-                                                 rgba(10,13,17,.85) 66%); }
+  /* ── Primera pantalla: el menu del juego ──────────────────────────────────────────────── */
+  .stage { position: relative; min-height: 100svh; display: grid; place-items: center;
+           text-align: center; overflow: hidden; isolation: isolate; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: -2; }
+  /* Sin viñeta radial: en el menu del juego el campo llega hasta el borde. Solo se protege la
+     franja de abajo, que es donde vive el texto. */
+  .stage .veil { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+                 background: linear-gradient(to bottom, rgba(10,13,17,0) 30%, rgba(10,13,17,.55) 48%,
+                                                        rgba(10,13,17,.9) 72%, var(--arena) 100%); }
+  .stage .inner { padding: 48px 20px 88px; pointer-events: none; }
+  .stage .inner a, .stage .gem { pointer-events: auto; }
 
-  main { position: relative; z-index: 2; padding: 40px 24px; pointer-events: none; }
-  main a { pointer-events: auto; }
+  .gem { width: 208px; height: 208px; margin: -24px auto 6px; cursor: pointer; border-radius: 50%; }
 
-  #gem { width: 208px; height: 208px; margin: -24px auto -30px; pointer-events: auto;
-         cursor: pointer; border-radius: 50%; }
-  #gem:focus-visible { outline: 2px solid var(--cian); outline-offset: 6px; }
+  .stage .wordmark { font-size: clamp(31px, 8.4vw, 58px); margin-bottom: 12px; }
+  .tag { color: var(--texto-3); letter-spacing: .2em; font-size: 13px; text-transform: uppercase;
+         margin: 0 auto 26px; max-width: 760px; text-wrap: balance; }
+  .line { color: var(--texto-1); max-width: 30ch; margin: 0 auto 32px; font-size: clamp(17px, 2.3vw, 21px);
+          line-height: 1.45; text-wrap: balance; }
 
-  /* El wordmark del menu: CRYSTAL en blanco, YSIS en cian, muy espaciado. */
-  h1 { font-size: clamp(31px, 8.4vw, 54px); font-weight: 800; letter-spacing: .17em;
-       margin: 0 0 10px; color: var(--texto-1); }
-  h1 span { color: var(--cian); }
-  p.tag { color: var(--texto-3); letter-spacing: .2em; font-size: 13px; text-transform: uppercase;
-          margin: 0 0 32px; }
-  p.desc { color: var(--texto-2); max-width: 470px; margin: 0 auto 34px; line-height: 1.65; }
+  .quick { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .quick .soon { color: var(--texto-3); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; }
+  .quick .soon b { color: var(--texto-1); font-weight: 500; }
 
-  /* El boton del menu es una pildora cian con texto oscuro y un ▶ delante. */
-  .cta { display: inline-flex; align-items: center; gap: 12px; background: var(--cian);
-         color: #06171D; font-weight: 800; letter-spacing: .1em; text-decoration: none;
-         border-radius: 999px; padding: 16px 38px; font-size: 15px;
-         box-shadow: 0 0 40px rgba(89,217,242,.22); transition: background .15s, transform .15s; }
-  .cta:hover { background: #7EE5FA; transform: translateY(-1px); }
-  .soon { display: block; color: var(--texto-3); font-size: 12px; letter-spacing: .14em;
-          text-transform: uppercase; margin-top: 16px; }
-  .soon b { color: var(--texto-2); font-weight: 600; }
-
-  .foot { color: #5C6678; font-size: 13px; margin-top: 42px; }
-  .foot a { color: var(--cian); text-decoration: none; }
-  .foot a:hover { text-decoration: underline; }
-
-  #hint { height: 16px; margin: -4px 0 16px; opacity: 0; transition: opacity .5s;
+  #hint { height: 16px; margin: 0 0 18px; opacity: 0; transition: opacity .5s;
           color: var(--texto-3); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
   #hint.on { opacity: .9; }
   #hint svg { vertical-align: -3px; margin-right: 7px; }
 
-  @media (prefers-reduced-motion: reduce) { .cta { transition: none; } }
+  .down { position: absolute; left: 50%; bottom: 22px; translate: -50% 0; color: var(--texto-3);
+          text-decoration: none; font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+          display: inline-flex; flex-direction: column; align-items: center; gap: 6px; }
+  .down:hover { color: var(--texto-1); }
+
+  /* ── El resto: un documento sobre la arena ───────────────────────────────────────────── */
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  section { padding: clamp(72px, 11vw, 132px) 0 0; }
+  h2 { font-family: var(--fuente); font-weight: 700; color: var(--texto-1); letter-spacing: -.01em;
+       font-size: clamp(30px, 4.6vw, 52px); line-height: 1.06; margin: 0 0 18px; text-wrap: balance; }
+  .lede { font-size: clamp(17px, 1.8vw, 19px); max-width: 58ch; margin: 0; color: var(--texto-2); }
+
+  /* Trailer: una portada con el arte de Steam; YouTube solo se carga al pulsar. */
+  .trailer { margin-top: 36px; position: relative; aspect-ratio: 16 / 9; border-radius: 14px;
+             overflow: hidden; background: #000; box-shadow: 0 30px 70px -30px rgba(0,0,0,.8); }
+  .trailer button { all: unset; cursor: pointer; position: absolute; inset: 0; display: block; }
+  .trailer img { width: 100%; height: 100%; object-fit: cover;
+                 transition: transform .6s cubic-bezier(.16,1,.3,1), filter .3s; }
+  /* A la izquierda del cristal: en el centro tapaba la estela de la bola. */
+  .trailer .play { position: absolute; left: 34%; top: 50%; translate: -50% -50%; width: 92px; height: 92px;
+                   border-radius: 50%; background: var(--cian); color: var(--sobre-cian);
+                   display: grid; place-items: center; box-shadow: 0 12px 40px -8px rgba(0,0,0,.6);
+                   transition: transform .25s cubic-bezier(.16,1,.3,1), background .15s; }
+  .trailer button:hover img { transform: scale(1.02); filter: brightness(.82); }
+  .trailer button:hover .play { transform: scale(1.08); background: var(--cian-hi); }
+  .trailer button:focus-visible { outline: 2px solid var(--cian); outline-offset: -4px; border-radius: 14px; }
+  .trailer iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .note { color: var(--texto-3); font-size: 14px; margin: 14px 0 0; }
+  .note a { color: var(--texto-2); }
+
+  /* Capturas: una grande y la tira para cambiarla. */
+  .shots { margin-top: 36px; display: grid; gap: 12px; }
+  .shots .big { display: block; border-radius: 12px; overflow: hidden; border: 1px solid var(--linea);
+                background: var(--arena-2); }
+  .shots .big img { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; }
+  .strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .strip button { all: unset; display: block; cursor: pointer; border-radius: 8px; overflow: hidden;
+                  border: 1px solid var(--linea); opacity: .55; transition: opacity .2s, border-color .2s; }
+  .strip button:hover { opacity: .85; }
+  .strip button[aria-pressed="true"] { opacity: 1; border-color: var(--cian); }
+  .strip button:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
+  .strip img { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; }
+
+  /* Lo que trae: filas con regla fina, sin tarjetas, y de largo distinto a proposito. */
+  .facts { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px 64px; align-items: start; }
+  .facts ul { list-style: none; margin: 6px 0 0; padding: 0; }
+  .facts li { padding: 18px 0; border-top: 1px solid var(--linea); color: var(--texto-2); max-width: 62ch; }
+  .facts li:last-child { border-bottom: 1px solid var(--linea); }
+  .facts li b { color: var(--texto-1); font-weight: 500; }
+
+  /* Tiendas. El estado de cada una es un atributo: live enlaza, soon lo anuncia, off no sale.
+     Cambiar una tienda de estado = cambiar su data-state (y su href). La portada lo lee de aqui. */
+  #stores { list-style: none; margin: 36px 0 0; padding: 0; border-bottom: 1px solid var(--linea); }
+  /* Columnas fijas: cada fila es su propia rejilla, y con una columna auto el texto del medio
+     empezaba en una x distinta en cada tienda. */
+  #stores li { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px 24px;
+               align-items: center; padding: 22px 0; border-top: 1px solid var(--linea); }
+  #stores li[data-state="off"] { display: none; }
+  #stores .name { font-size: clamp(22px, 2.6vw, 28px); font-weight: 700; color: var(--texto-1); line-height: 1.1; }
+  #stores .name small { display: block; font-size: 14px; font-weight: 400; color: var(--texto-3); margin-top: 4px; }
+  #stores .go { justify-self: end; }
+  #stores [data-state="soon"] .go { color: var(--ambar); font-size: 13px; letter-spacing: .14em;
+                                    text-transform: uppercase; }
+  #stores .go a { color: var(--cian); font-weight: 500; text-decoration: none; display: inline-flex;
+                  align-items: center; gap: 8px; }
+  #stores .go a:hover { color: var(--cian-hi); text-decoration: underline; }
+
+  footer { margin-top: clamp(80px, 12vw, 140px); padding: 28px 0 40px; border-top: 1px solid var(--linea);
+           color: var(--texto-3); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 28px; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+  footer a { color: var(--texto-2); text-decoration: none; }
+  footer a:hover { color: var(--cian); text-decoration: underline; }
+
+  @media (max-width: 760px) {
+    .facts { grid-template-columns: 1fr; }
+    .strip { grid-template-columns: repeat(5, 30%); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+    .strip button { scroll-snap-align: start; }
+    #stores li { grid-template-columns: 1fr; }
+    #stores .go { justify-self: start; }
+    .trailer .play { width: 68px; height: 68px; }
+    .gem { width: 176px; height: 176px; }
+    .tag { font-size: 12px; letter-spacing: .14em; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trailer img, .trailer .play, #hint { transition: none; }
+    .trailer button:hover img, .trailer button:hover .play { transform: none; }
+  }
 </style>
 </head>
 <body>
 
-<canvas id="arena" aria-hidden="true"></canvas>
-<div id="veil"></div>
+<header class="stage">
+  <canvas id="arena" aria-hidden="true"></canvas>
+  <div class="veil"></div>
+  <div class="inner">
+    <div id="gem" class="gem" role="button" tabindex="0" aria-label="Break the crystal"></div>
+    <div id="hint">
+      <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true">
+        <path d="M1 1 L1 11.4 L3.7 8.9 L5.6 13.4 L7.7 12.5 L5.9 8.2 L9.4 7.9 Z"
+              fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
+      </svg><span id="hint-text">click the crystal</span>
+    </div>
+
+    <h1 class="wordmark">CRYSTAL<span>YSIS</span></h1>
+    <p class="tag">Horde survival · Supervivencia de hordas · 晶解</p>
+    <p class="line">Charge your ball and ricochet it across the arena at top speeds to defend your crystal.</p>
+
+    <!-- Se rellena desde #stores al cargar; esto es lo que se ve sin JavaScript. -->
+    <div class="quick" id="quick">
+      <a class="cta" href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">
+        <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true"><path d="M1 1 L12 7.5 L1 14 Z" fill="currentColor"/></svg>
+        <span>Play free on Google Play</span></a>
+      <span class="soon">Coming soon to <b>Steam</b></span>
+    </div>
+  </div>
+  <a class="down" href="#trailer">Watch the trailer
+    <svg width="14" height="9" viewBox="0 0 14 9" aria-hidden="true"><path d="M1 1 L7 7 L13 1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+</header>
 
 <main>
-  <div id="gem" role="button" tabindex="0" aria-label="Break the crystal"></div>
-  <div id="hint">
-    <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true">
-      <path d="M1 1 L1 11.4 L3.7 8.9 L5.6 13.4 L7.7 12.5 L5.9 8.2 L9.4 7.9 Z"
-            fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
-    </svg><span id="hint-text">click the crystal</span>
+
+<section id="trailer">
+  <div class="wrap">
+    <h2>Pull back. Let go.</h2>
+    <p class="lede">The ball never dies, but it slows down. Damage is speed, so every run is a fight
+    to keep it fast.</p>
+    <div class="trailer">
+      <button type="button" id="play-trailer" aria-label="Play the Crystalysis trailer">
+        <img src="img/trailer-poster.webp" width="1280" height="720" alt="" loading="lazy">
+        <span class="play" aria-hidden="true">
+          <svg width="30" height="34" viewBox="0 0 13 15"><path d="M2 1 L12 7.5 L2 14 Z" fill="currentColor"/></svg>
+        </span>
+      </button>
+    </div>
+    <p class="note">Plays from YouTube. <a href="https://youtu.be/qAkrmIxKML0">Open it on YouTube</a>.</p>
   </div>
+</section>
 
-  <h1>CRYSTAL<span>YSIS</span></h1>
-  <p class="tag">Horde survival · Supervivencia de hordas · 晶解</p>
-  <p class="desc">Pull back, let go, and watch one ball tear a hole through the horde. Speed is
-  damage, so a run is a fight to keep it fast. Defend the crystal, or watch it hatch.</p>
+<section id="screens">
+  <div class="wrap">
+    <h2>The crystal sits in the middle. The waves come for it.</h2>
+    <p class="lede">Every level you pick up upgrades. Stack them into a build, mix weapons and
+    passives. Resist, hold, burst the waves.</p>
+    <div class="shots">
+      <a class="big" id="big" href="press/screenshots-pc/crystalysis-pc-04-full-screen.png">
+        <img id="big-img" src="img/crystalysis-pc-04-full-screen.webp" width="1280" height="720"
+             alt="Wave 29 on PC: the arena full of enemy trails, the build on the left and the score on the right" loading="lazy">
+      </a>
+      <div class="strip" role="group" aria-label="Screenshots">
+        <button type="button" data-shot="crystalysis-pc-01-early" aria-pressed="false"><img src="img/crystalysis-pc-01-early.webp" width="1280" height="720" alt="Wave 4, early in a run" loading="lazy"></button>
+        <button type="button" data-shot="crystalysis-pc-02-ball-in-flight" aria-pressed="false"><img src="img/crystalysis-pc-02-ball-in-flight.webp" width="1280" height="720" alt="Wave 12, the ball in flight" loading="lazy"></button>
+        <button type="button" data-shot="crystalysis-pc-03-mid-run" aria-pressed="false"><img src="img/crystalysis-pc-03-mid-run.webp" width="1280" height="720" alt="Wave 19, mid run" loading="lazy"></button>
+        <button type="button" data-shot="crystalysis-pc-04-full-screen" aria-pressed="true"><img src="img/crystalysis-pc-04-full-screen.webp" width="1280" height="720" alt="Wave 29 on PC: the arena full of enemy trails, the build on the left and the score on the right" loading="lazy"></button>
+        <button type="button" data-shot="crystalysis-pc-05-level-up" aria-pressed="false"><img src="img/crystalysis-pc-05-level-up.webp" width="1280" height="720" alt="Picking an upgrade on level up" loading="lazy"></button>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <p><a class="cta" href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">
-     <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true"><path d="M1 1 L12 7.5 L1 14 Z" fill="currentColor"/></svg>
-     PLAY FREE ON GOOGLE PLAY</a>
-     <span class="soon">Coming soon to <b>Steam</b></span></p>
+<section id="features">
+  <div class="wrap facts">
+    <h2>Six artifacts. Six maps. Four ways to aim.</h2>
+    <ul>
+      <li><b>Each artifact changes how you control the ball</b>, not how big your numbers are: the
+        Ball, the Cannonball, the Katana, the Saw, and two different ways to play the Tether.</li>
+      <li><b>Weapons, passives and Aspects.</b> Max the right weapon with the right passive and they
+        evolve into a new, better weapon.</li>
+      <li>Fire, ice, kinetic, orbitals, summons and salvo feed into each other, so a passive taken for
+        one reason often improves something you picked for another.</li>
+      <li>Endless runs with no finish line, a Timed Run that ends in a boss fight, and a daily run on a
+        seed everybody shares.</li>
+      <li>Aim with a quick flick or a full slingshot pull.</li>
+      <li>Mouse, controller or touch. Fully offline, in thirteen languages, with online leaderboards
+        when you want them.</li>
+    </ul>
+  </div>
+</section>
 
-  <p class="foot"><a href="press.html">Press kit</a> · <a href="privacy.html">Privacy Policy</a>
-     · Trikyname · <a href="mailto:trikyname@gmail.com">contact</a></p>
+<section id="play">
+  <div class="wrap">
+    <h2>Where to play</h2>
+    <ul id="stores">
+      <li data-state="live" data-short="Google Play">
+        <span class="name">Google Play<small>Android</small></span>
+        <span class="what">Free, in open testing.</span>
+        <span class="go"><a href="https://play.google.com/store/apps/details?id=com.Trikyname.Crystalysis">Get it on Google Play
+          <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><path d="M1 5 H12 M8 1 L12 5 L8 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></span>
+      </li>
+      <!-- Cuando la ficha sea publica: data-state="live" y un enlace dentro de .go
+           (Wishlist on Steam → https://store.steampowered.com/app/5282020/). -->
+      <li data-state="soon" data-short="Steam">
+        <span class="name">Steam<small>Windows PC</small></span>
+        <span class="what">Early Access.</span>
+        <span class="go">Coming soon</span>
+      </li>
+      <!-- La demo de itch sale despues de que la ficha de Steam sea publica. Falta su URL. -->
+      <li data-state="off" data-short="itch.io">
+        <span class="name">itch.io<small>Browser and Windows</small></span>
+        <span class="what">Free demo.</span>
+        <span class="go"><a href="">Play the demo
+          <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><path d="M1 5 H12 M8 1 L12 5 L8 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></span>
+      </li>
+      <!-- Cuando Apple la apruebe: data-state="live" y el enlace real de la App Store. -->
+      <li data-state="off" data-short="the App Store">
+        <span class="name">App Store<small>iPhone and iPad</small></span>
+        <span class="what">Free.</span>
+        <span class="go"><a href="">Download on the App Store
+          <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><path d="M1 5 H12 M8 1 L12 5 L8 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></span>
+      </li>
+    </ul>
+  </div>
+</section>
+
 </main>
+
+<footer>
+  <div class="wrap">
+    <span>Made by Trikyname in Spain</span>
+    <nav aria-label="Site">
+      <a href="press.html">Press kit</a>
+      <a href="privacy.html">Privacy policy</a>
+      <a href="delete-data.html">Delete your data</a>
+      <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a>
+    </nav>
+  </div>
+</footer>
 
 <script src="arena.js"></script>
 <script>
+  // La portada lee las tiendas de #stores: la primera "live" es el boton, el resto se nombra debajo.
+  (function () {
+    var rows = document.querySelectorAll('#stores li');
+    var live = [], soon = [];
+    for (var i = 0; i < rows.length; i++) {
+      var s = rows[i].getAttribute('data-state');
+      if (s === 'live') live.push(rows[i].getAttribute('data-short'));
+      else if (s === 'soon') soon.push(rows[i].getAttribute('data-short'));
+    }
+    var first = document.querySelector('#stores li[data-state="live"] .go a');
+    if (!first) return;
+    var quick = document.getElementById('quick');
+    quick.querySelector('.cta').href = first.href;
+    if (live[0] !== 'Google Play') quick.querySelector('.cta span').textContent = first.textContent.trim();
+    var parts = [];
+    if (live.length > 1) parts.push('Also on <b>' + live.slice(1).join('</b>, <b>') + '</b>');
+    if (soon.length) parts.push('Coming soon to <b>' + soon.join('</b> and <b>') + '</b>');
+    var line = quick.querySelector('.soon');
+    if (parts.length) line.innerHTML = parts.join(' · '); else line.remove();
+  })();
+
+  // Capturas: la tira cambia la grande y su enlace al PNG completo.
+  (function () {
+    var big = document.getElementById('big'), img = document.getElementById('big-img');
+    var btns = document.querySelectorAll('.strip button');
+    for (var i = 0; i < btns.length; i++) btns[i].addEventListener('click', function () {
+      var id = this.getAttribute('data-shot');
+      img.src = 'img/' + id + '.webp';
+      img.alt = this.querySelector('img').alt;
+      big.href = 'press/screenshots-pc/' + id + '.png';
+      for (var j = 0; j < btns.length; j++) btns[j].setAttribute('aria-pressed', String(btns[j] === this));
+    });
+  })();
+
+  // Trailer: YouTube (sin cookies) solo cuando se pide.
+  document.getElementById('play-trailer').addEventListener('click', function () {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/qAkrmIxKML0?autoplay=1&rel=0';
+    f.title = 'Crystalysis trailer';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    this.parentNode.replaceChild(f, this);
+  });
+
   var hint = document.getElementById('hint');
   if (matchMedia('(pointer: coarse)').matches) {
     document.getElementById('hint-text').textContent = 'tap the crystal';
