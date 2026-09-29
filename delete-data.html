@@ -36,8 +36,14 @@
 
 <h2 id="en">Delete your data (English)</h2>
 
-<h3>There is no account to delete</h3>
-<p>Crystalysis never asks you to create an account or to sign in. To store your cloud backup, the game signs in <b>anonymously</b> and Unity Gaming Services issues a random player ID for your installation. We hold no name, e-mail address or Google account of yours — only that random ID and the game progress stored under it.</p>
+<h3>What we hold</h3>
+<p>We never ask for your name or e-mail address, and the game has no account of its own to delete. What Unity Gaming Services stores for us sits under a <b>player ID</b>: a random one on most versions, your Steam account on Steam, and on Android also your Google Play Games account if you linked it in <i>Settings</i>. <i>Settings</i> shows it as your <b>Cloud ID</b>. Gameplay statistics, if you agreed to them, sit under your installation ID, which <i>Settings</i> shows as your <b>Analytics ID</b>.</p>
+<p>What exists depends on the version you play:</p>
+<ul>
+  <li><b>Android, iPhone and iPad, itch.io and Epic (PC):</b> a cloud backup of your progress, your online leaderboard entries and, if you said yes, gameplay statistics. <i>Settings</i> has the DELETE CLOUD BACKUP button.</li>
+  <li><b>Steam:</b> online leaderboard entries and, if you said yes, gameplay statistics. There is no button, because your progress lives in Steam Cloud (Valve), not with us. Ask us by e-mail (Option 2).</li>
+  <li><b>Demos:</b> no cloud backup and no leaderboards. The game still gets a player ID when it fetches its settings from Unity, and gameplay statistics if you said yes.</li>
+</ul>
 
 <h3>Option 1 — Delete it yourself, from inside the game (recommended)</h3>
 <div class="steps">
@@ -49,35 +55,47 @@
   <li>The button reports <b>CLOUD BACKUP DELETED</b> when it is done.</li>
 </ol>
 </div>
-<p>This permanently erases your cloud backup from Unity's servers. It takes effect immediately; there is no waiting period.</p>
-<p>If you do not see the button, there is no cloud backup associated with your installation — nothing is stored on our side and there is nothing to delete.</p>
+<p>This permanently erases your cloud backup from Unity's servers, straight away. If you had agreed to gameplay statistics, it also turns them off and asks Unity to delete them.</p>
 
 <h3>Option 2 — Ask us by e-mail</h3>
-<p>If you have already uninstalled the game and can no longer use the button, e-mail <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a> with the subject <b>"Delete my data"</b> and include your <b>Cloud ID</b>. The Cloud ID is shown in <i>Settings</i>, right by the delete button ("Cloud ID: …"), so it helps to copy it down before uninstalling. We will delete the backup and confirm by reply.</p>
-<p>Without that ID we have no way to tell which anonymous backup is yours, since we hold no personal information that could identify you.</p>
+<p>If you have already uninstalled the game, if you play on Steam, or if you also want your leaderboard entries removed, e-mail <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a> with the subject <b>"Delete my data"</b>. Include your <b>Cloud ID</b> and, for gameplay statistics, your <b>Analytics ID</b>. Both are shown in <i>Settings</i> ("Cloud ID: …", "Analytics ID: …"), so it helps to copy them down before uninstalling. We will delete what is stored under them and confirm by reply.</p>
+<p>Without those IDs we have no way to tell which data is yours, since we hold no personal information that could identify you.</p>
 
 <h3>What gets deleted</h3>
-<p>The in-game button erases your <b>cloud backup</b>: your best score, unlocked content, in-game currency and fragments, claimed achievements, your leaderboard history and your saved run.</p>
-<p>Your entry in the <b>online leaderboard</b> is stored separately and is <b>not</b> removed by that button. To have it removed as well, e-mail us as described in Option 2 and say so — we will delete it and confirm. It contains only a score and your anonymous player ID.</p>
+<p>The in-game button erases your <b>cloud backup</b>: your best scores, unlocked content, in-game currency and fragments, claimed achievements, purchase records, your leaderboard history and your saved run.</p>
+<p>Your entries in the online leaderboards are stored separately, and the button does not remove them. To have them removed, e-mail us as in Option 2 and say so: we will delete them and confirm. Each entry holds a score, your player ID and your emoji handle.</p>
 
 <h3>Gameplay statistics</h3>
-<p>If you agreed to share gameplay data, turn off <b>Share gameplay data</b> in <i>Settings</i>. That stops the sending and asks Unity Analytics to delete what was already sent; Unity says it handles these requests within three working days. The <b>DELETE CLOUD BACKUP</b> button does the same when you use it. These statistics are stored under an identifier of your installation that the game does not show, so turn the setting off before you uninstall. Otherwise, Unity deletes the raw events automatically after 13 months.</p>
+<p>If you agreed to share gameplay data, turn off <i>Share gameplay data</i> in <i>Settings</i>. The game sends what was already queued, stops, and asks Unity Analytics to delete everything it received. If you turn it back on before that request reaches Unity (for example, while offline), the request is cancelled. Unity says it handles deletion requests within three working days. After uninstalling, e-mail us your Analytics ID instead. If you do nothing, Unity deletes the raw events after 13 months.</p>
 
-<h3>What is deleted when you uninstall</h3>
-<p>All game data held on the device itself — including any opt-in statistics CSV files — is removed when you uninstall the app. Your <b>cloud backup is not</b>: that is precisely what allows your progress to return if you reinstall. Use one of the two options above to erase it.</p>
+<h3>What uninstalling does and does not remove</h3>
+<p>Uninstalling removes the game's files from the device, with some exceptions:</p>
+<ul>
+  <li><b>Android:</b> the system's backup can bring back your progress, your IDs and your answer about gameplay statistics when you reinstall or move to a new phone.</li>
+  <li><b>iPhone and iPad:</b> device backups can do the same.</li>
+  <li><b>PC:</b> the game's settings, including that answer, stay in the Windows registry, and your local profile stays in <code>AppData\LocalLow\Trikyname\Crystalysis</code> in your user folder. Delete that folder to remove it.</li>
+</ul>
+<p>Your cloud backup stays on Unity's servers after uninstalling: that is what brings your progress back. Use one of the two options above to erase it.</p>
+<p>Versions built before 29 September 2026 could also keep run statistics as CSV files on the device if you turned that option on. They are kept with the game's other files, as described above. Newer versions only have that option in development builds.</p>
 
 <h3>How long we keep data</h3>
-<p>Your cloud backup is kept for as long as you leave it there. We do not expire it, and we do not delete it on our own initiative.</p>
+<p>Your cloud backup and your leaderboard entries are kept for as long as you leave them there. We do not expire them, and we do not delete them on our own initiative.</p>
 
-<h3>Data held by Unity and Google</h3>
-<p>Crash reports from versions built before 28 September 2026, and the technical reports of Unity's purchasing library, are processed by <b>Unity Technologies</b>, and advertising data (where rewarded ads are available) by <b>Google</b>. The steps above do not cover them; see <a href="https://unity.com/legal/privacy-policy">Unity's Privacy Policy</a> and <a href="https://policies.google.com/privacy">Google's Privacy Policy</a>. You can reset or delete your advertising ID in your Android device settings.</p>
+<h3>Data held by Valve, Unity and Google</h3>
+<p>What Steam Cloud stores on Steam is handled by Valve: see <a href="https://store.steampowered.com/privacy_agreement/">Steam's Privacy Policy</a> and <a href="https://help.steampowered.com/">Steam Support</a>. Crash reports from versions built before 28 September 2026, the technical reports of Unity's purchasing library and the requests to Unity Remote Config are processed by Unity Technologies, and advertising data (where rewarded ads are available) by Google. The steps above do not cover them; see <a href="https://unity.com/legal/privacy-policy">Unity's Privacy Policy</a> and <a href="https://policies.google.com/privacy">Google's Privacy Policy</a>. You can reset or delete your advertising ID in your Android device settings.</p>
 
 <hr>
 
 <h2 id="es">Borrado de tus datos (Español)</h2>
 
-<h3>No hay ninguna cuenta que borrar</h3>
-<p>Crystalysis nunca te pide crear una cuenta ni iniciar sesión. Para guardar tu copia en la nube, el juego inicia sesión de forma <b>anónima</b> y Unity Gaming Services emite un identificador de jugador aleatorio para tu instalación. No tenemos tu nombre, tu correo ni tu cuenta de Google: solo ese identificador aleatorio y el progreso guardado bajo él.</p>
+<h3>Qué guardamos</h3>
+<p>Nunca te pedimos tu nombre ni tu correo, y el juego no tiene una cuenta propia que borrar. Lo que Unity Gaming Services guarda para nosotros va bajo un <b>identificador de jugador</b>: uno aleatorio en la mayoría de versiones, tu cuenta de Steam en Steam y, en Android, también tu cuenta de Google Play Games si la vinculaste en <i>Ajustes</i>. <i>Ajustes</i> lo muestra como tu <b>ID de nube</b>. Las estadísticas de juego, si las aceptaste, van bajo tu identificador de instalación, que <i>Ajustes</i> muestra como tu <b>ID de Analytics</b>.</p>
+<p>Lo que existe depende de la versión con la que juegas:</p>
+<ul>
+  <li><b>Android, iPhone y iPad, itch.io y Epic (PC):</b> una copia en la nube de tu progreso, tus entradas en las clasificaciones online y, si dijiste que sí, las estadísticas de juego. En <i>Ajustes</i> está el botón BORRAR COPIA EN LA NUBE.</li>
+  <li><b>Steam:</b> tus entradas en las clasificaciones online y, si dijiste que sí, las estadísticas de juego. No hay botón, porque tu progreso vive en Steam Cloud (Valve), no con nosotros. Pídenoslo por correo (Opción 2).</li>
+  <li><b>Demos:</b> sin copia en la nube ni clasificaciones. El juego obtiene igualmente un identificador de jugador al pedir sus ajustes a Unity, y las estadísticas de juego si dijiste que sí.</li>
+</ul>
 
 <h3>Opción 1 — Bórralo tú, desde el propio juego (recomendado)</h3>
 <div class="steps">
@@ -89,28 +107,34 @@
   <li>El botón indica <b>COPIA EN LA NUBE BORRADA</b> cuando ha terminado.</li>
 </ol>
 </div>
-<p>Esto elimina de forma permanente tu copia de seguridad de los servidores de Unity. Tiene efecto inmediato; no hay periodo de espera.</p>
-<p>Si no ves el botón, es que no hay ninguna copia en la nube asociada a tu instalación: no guardamos nada por nuestra parte y no hay nada que borrar.</p>
+<p>Esto elimina de forma permanente tu copia de seguridad de los servidores de Unity, en el momento. Si habías aceptado las estadísticas de juego, además las desactiva y pide a Unity que las borre.</p>
 
 <h3>Opción 2 — Pídenoslo por correo</h3>
-<p>Si ya has desinstalado el juego y no puedes usar el botón, escribe a <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a> con el asunto <b>"Borrar mis datos"</b> e incluye tu <b>ID de nube</b>. El ID de nube aparece en <i>Ajustes</i>, junto al botón de borrado ("ID de nube: …"), así que conviene copiarlo antes de desinstalar. Borraremos la copia y te lo confirmaremos por respuesta.</p>
-<p>Sin ese identificador no podemos saber cuál de las copias anónimas es la tuya, porque no guardamos ningún dato personal que permita identificarte.</p>
+<p>Si ya has desinstalado el juego, si juegas en Steam o si también quieres que borremos tus entradas en las clasificaciones, escribe a <a href="mailto:trikyname@gmail.com">trikyname@gmail.com</a> con el asunto <b>"Borrar mis datos"</b>. Incluye tu <b>ID de nube</b> y, para las estadísticas de juego, tu <b>ID de Analytics</b>. Los dos aparecen en <i>Ajustes</i> ("ID de nube: …", "ID de Analytics: …"), así que conviene copiarlos antes de desinstalar. Borraremos lo que haya guardado bajo ellos y te lo confirmaremos por respuesta.</p>
+<p>Sin esos identificadores no podemos saber qué datos son tuyos, porque no guardamos ningún dato personal que permita identificarte.</p>
 
 <h3>Qué se borra</h3>
-<p>El botón del juego elimina tu <b>copia de seguridad en la nube</b>: tu mejor puntuación, el contenido desbloqueado, la moneda y los fragmentos del juego, los logros reclamados, tu historial de clasificación y tu partida guardada.</p>
-<p>Tu entrada en la <b>clasificación online</b> se guarda aparte y ese botón <b>no</b> la elimina. Para que también la borremos, escríbenos como se indica en la Opción 2 y dínoslo: la eliminaremos y te lo confirmaremos. Contiene únicamente una puntuación y tu identificador anónimo de jugador.</p>
+<p>El botón del juego elimina tu <b>copia en la nube</b>: tus mejores puntuaciones, el contenido desbloqueado, la moneda y los fragmentos del juego, los logros reclamados, el registro de compras, tu historial de clasificación y tu partida guardada.</p>
+<p>Tus entradas en las clasificaciones online se guardan aparte y el botón no las elimina. Para que las borremos, escríbenos como se indica en la Opción 2 y dínoslo: las eliminaremos y te lo confirmaremos. Cada entrada lleva una puntuación, tu identificador de jugador y tu apodo de emojis.</p>
 
 <h3>Estadísticas de juego</h3>
-<p>Si aceptaste compartir datos de juego, desactiva <b>Compartir datos de juego</b> en <i>Ajustes</i>. Eso para el envío y pide a Unity Analytics que borre lo que ya se había enviado; Unity dice que atiende estas peticiones en tres días laborables. El botón <b>BORRAR COPIA EN LA NUBE</b> hace lo mismo cuando lo usas. Estas estadísticas se guardan bajo un identificador de tu instalación que el juego no muestra, así que desactiva el ajuste antes de desinstalar. Si no, Unity borra los eventos en bruto automáticamente a los 13 meses.</p>
+<p>Si aceptaste compartir datos de juego, desactiva <i>Compartir datos de juego</i> en <i>Ajustes</i>. El juego envía lo que ya estaba en cola, se para y pide a Unity Analytics que borre todo lo que recibió. Si vuelves a activarlo antes de que esa petición llegue a Unity (por ejemplo, sin conexión), la petición se cancela. Unity dice que atiende las peticiones de borrado en tres días laborables. Después de desinstalar, mándanos por correo tu ID de Analytics. Si no haces nada, Unity borra los eventos en bruto a los 13 meses.</p>
 
-<h3>Qué se borra al desinstalar</h3>
-<p>Todos los datos del juego que viven en el propio dispositivo —incluidos los archivos CSV de estadísticas, si los activaste— se eliminan al desinstalar la app. Tu <b>copia en la nube no</b>: es justamente lo que permite que tu progreso vuelva si reinstalas. Usa una de las dos opciones de arriba para eliminarla.</p>
+<h3>Qué quita y qué no quita desinstalar</h3>
+<p>Desinstalar elimina los archivos del juego del dispositivo, con algunas excepciones:</p>
+<ul>
+  <li><b>Android:</b> la copia de seguridad del sistema puede devolver tu progreso, tus identificadores y tu respuesta sobre las estadísticas al reinstalar o al pasar a un móvil nuevo.</li>
+  <li><b>iPhone y iPad:</b> las copias del dispositivo pueden hacer lo mismo.</li>
+  <li><b>PC:</b> los ajustes del juego, esa respuesta incluida, se quedan en el registro de Windows, y tu perfil local en <code>AppData\LocalLow\Trikyname\Crystalysis</code>, dentro de tu carpeta de usuario. Borra esa carpeta para eliminarlo.</li>
+</ul>
+<p>Tu copia en la nube sigue en los servidores de Unity después de desinstalar: es lo que devuelve tu progreso. Usa una de las dos opciones de arriba para eliminarla.</p>
+<p>Las versiones compiladas antes del 29 de septiembre de 2026 podían guardar además estadísticas de partidas en archivos CSV del dispositivo, si activabas esa opción. Se guardan con los demás archivos del juego, como se explica arriba. Las versiones nuevas solo tienen esa opción en las builds de desarrollo.</p>
 
 <h3>Cuánto tiempo conservamos los datos</h3>
-<p>Tu copia en la nube se conserva mientras la dejes ahí. No caduca y no la borramos por iniciativa propia.</p>
+<p>Tu copia en la nube y tus entradas en las clasificaciones se conservan mientras las dejes ahí. No caducan y no las borramos por iniciativa propia.</p>
 
-<h3>Datos en poder de Unity y Google</h3>
-<p>Los informes de fallos de las versiones compiladas antes del 28 de septiembre de 2026 y los informes técnicos de la biblioteca de compras de Unity los procesa <b>Unity Technologies</b>, y los datos de publicidad (donde haya anuncios recompensados) <b>Google</b>. Los pasos de arriba no los cubren; consulta la <a href="https://unity.com/legal/privacy-policy">política de privacidad de Unity</a> y la <a href="https://policies.google.com/privacy?hl=es">política de privacidad de Google</a>. Puedes restablecer o eliminar tu identificador de publicidad en los ajustes de tu dispositivo Android.</p>
+<h3>Datos en poder de Valve, Unity y Google</h3>
+<p>Lo que Steam Cloud guarda en Steam lo gestiona Valve: consulta la <a href="https://store.steampowered.com/privacy_agreement/?l=spanish">política de privacidad de Steam</a> y el <a href="https://help.steampowered.com/es/">soporte de Steam</a>. Los informes de fallos de las versiones compiladas antes del 28 de septiembre de 2026, los informes técnicos de la biblioteca de compras de Unity y las peticiones a Unity Remote Config los procesa Unity Technologies, y los datos de publicidad (donde haya anuncios recompensados) Google. Los pasos de arriba no los cubren; consulta la <a href="https://unity.com/legal/privacy-policy">política de privacidad de Unity</a> y la <a href="https://policies.google.com/privacy?hl=es">política de privacidad de Google</a>. Puedes restablecer o eliminar tu identificador de publicidad en los ajustes de tu dispositivo Android.</p>
 
 </main>
 </body>
